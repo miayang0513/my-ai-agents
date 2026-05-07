@@ -8,8 +8,13 @@ A complete guide to setting up Claude Code, from installation to advanced config
 
 ### Prerequisites
 
-- A terminal (zsh, bash, fish all fine)
-- macOS, Linux, or Windows (WSL recommended on Windows)
+- macOS with a terminal (zsh, bash, fish all fine)
+- **`jq`** — required by `statusline.sh` and `scripts/guard-bash.sh`
+- **`node`** — required by the Codex plugin hooks and `npx`-based MCPs (Playwright, Firecrawl). Install via Homebrew, **not** nvm; nvm's lazy-load shim doesn't activate in non-interactive subprocesses, which breaks hooks and MCPs spawned by Claude Code.
+
+```bash
+brew install jq node
+```
 
 ### Install the CLI
 
@@ -68,19 +73,44 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 - [`./scripts/guard-bash.sh`](./scripts/guard-bash.sh) → `~/.claude/scripts/guard-bash.sh` — destructive-Bash-command blocker (wired up under `hooks.PreToolUse` in `settings.json`)
 - [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents (frontend, backend, devops, PM, UX, QA, security). See §4 → **Subagents**.
 
+Run from inside the `Claude/` directory of this repo:
+
 ```bash
-cp ./CLAUDE.md             ~/.claude/CLAUDE.md
-cp ./settings.json         ~/.claude/settings.json
-cp ./settings.local.json   ~/.claude/settings.local.json
-cp ./statusline.sh         ~/.claude/statusline.sh
-mkdir -p ~/.claude/scripts && cp ./scripts/guard-bash.sh ~/.claude/scripts/guard-bash.sh
-mkdir -p ~/.claude/agents  && cp ./agents/*.md          ~/.claude/agents/
+cd Claude/    # the snapshot directory in this repo
+
+cp CLAUDE.md             ~/.claude/CLAUDE.md
+cp settings.json         ~/.claude/settings.json
+cp settings.local.json   ~/.claude/settings.local.json
+cp statusline.sh         ~/.claude/statusline.sh
+mkdir -p ~/.claude/scripts && cp scripts/guard-bash.sh ~/.claude/scripts/guard-bash.sh
+mkdir -p ~/.claude/agents  && cp agents/*.md          ~/.claude/agents/
 chmod +x ~/.claude/statusline.sh ~/.claude/scripts/guard-bash.sh
 ```
 
 After copying `settings.json`, the listed marketplaces and `enabledPlugins` are *known* to Claude Code but the plugin payloads still need to be fetched. Open a session, run `/plugin`, and install each plugin shown as enabled. See §4 → **Plugins & Skills** for the full list.
 
 `guard-bash.sh` blocks `rm -rf`, `git push --force`, `git reset --hard`, `npm publish`, and friends before they execute (regardless of which agent or session ran them). Edit the `PATTERNS` array in the script to adjust the denylist.
+
+### Per-device steps (NOT covered by the snapshot)
+
+Three things live outside `~/.claude/` and must be redone on every new machine:
+
+**1. Claude.ai-managed MCP connectors** — tied to your account, not local files. After logging in, connect each at [claude.ai/settings/connectors](https://claude.ai/settings/connectors):
+
+- [ ] Notion
+- [ ] Gmail
+- [ ] Google Calendar
+- [ ] Google Drive
+- [ ] Figma
+
+**2. Local MCP servers** — Playwright and Firecrawl. These are stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so they don't come along with the snapshot. Re-add them:
+
+```bash
+claude mcp add playwright -- npx -y @playwright/mcp
+claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- npx -y firecrawl-mcp
+```
+
+**3. `FIRECRAWL_API_KEY`** — secret, intentionally not in this repo. Pull from your password manager, or generate a new one at [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys) (see §4 → MCP servers for the walkthrough).
 
 ---
 
@@ -117,7 +147,7 @@ claude mcp remove <name>                    # remove
 
 Servers can also be declared in `settings.json` under `mcpServers`. Once added, their tools appear in-session as `mcp__<server>__<tool>`.
 
-**Extras I run locally:**
+**Required on a new device** — the local MCPs below are stored in `~/.claude.json`, not `~/.claude/settings.json`, so the §3 snapshot copy does NOT bring them over. Re-add them per-device:
 
 ```bash
 # Browser automation — drives a real Chromium for navigating, clicking, scraping
@@ -283,6 +313,9 @@ After setup, confirm everything works end-to-end:
 3. `/status` → shows logged-in account and model
 4. Ask Claude to run `!git status` → executes shell command
 5. Edit a file via Claude → `git diff` shows expected change
+6. `claude mcp list` → all five Claude.ai-managed servers (Notion, Gmail, Calendar, Drive, Figma) **and** the two local ones (Playwright, Firecrawl) show `✓ Connected`
+7. `claude agents` → all custom subagents listed (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `security-reviewer`)
+8. Trigger a destructive Bash command (e.g. ask Claude to run `rm -rf /tmp/nope`) → guard-bash hook blocks it with the "Blocked by …" message
 
 If any step fails, check `~/.claude/logs/` for harness errors.
 
