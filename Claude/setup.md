@@ -66,7 +66,7 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 - [`./settings.local.json`](./settings.local.json) → `~/.claude/settings.local.json` — machine-local permission allowlist
 - [`./statusline.sh`](./statusline.sh) → `~/.claude/statusline.sh` — custom status line (wired up in `settings.json`)
 - [`./scripts/guard-bash.sh`](./scripts/guard-bash.sh) → `~/.claude/scripts/guard-bash.sh` — destructive-Bash-command blocker (wired up under `hooks.PreToolUse` in `settings.json`)
-- [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents (frontend, backend, PM, UX, QA, security). See §4 → **Subagents**.
+- [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents (frontend, backend, devops, PM, UX, QA, security). See §4 → **Subagents**.
 
 ```bash
 cp ./CLAUDE.md             ~/.claude/CLAUDE.md
@@ -250,6 +250,7 @@ Subagents are isolated Claude instances the main session can delegate to. Each r
 | --- | --- | --- | --- |
 | `frontend-engineer` | sonnet | RW | UI components, styling, client-side state, perf, a11y, frontend tests, anything Figma |
 | `backend-engineer` | sonnet | RW | APIs, services, schemas, queries, migrations, auth, jobs, AI-integration backends |
+| `devops-engineer` | sonnet | RW | CI/CD, Dockerfiles, IaC (Terraform/k8s/Helm), deployment configs, monitoring-as-code, build tooling |
 | `product-manager` | sonnet | RW (no Bash) | PRDs, specs, user stories, status updates, release notes, roadmap docs |
 | `uiux-designer` | sonnet | RW (no Bash) | Design review, design-system audits, a11y design checks, Figma-to-spec |
 | `qa-engineer` | sonnet | RW | Test plans, bug repros, e2e tests, flaky-test triage, coverage analysis |
