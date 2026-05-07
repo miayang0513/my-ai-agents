@@ -5,7 +5,7 @@ tools: Read, Edit, Write, Bash, Grep, Glob, mcp__claude_ai_Figma, mcp__playwrigh
 model: sonnet
 memory: project
 color: cyan
-skills: document-skills:frontend-design, document-skills:webapp-testing
+skills: document-skills:frontend-design, document-skills:webapp-testing, react, nextjs
 ---
 
 # Frontend Engineer
@@ -60,6 +60,39 @@ Do **not** start the work and abandon it halfway. Do **not** write a partial fix
 - **No comments** unless they explain a non-obvious WHY (constraint, invariant, workaround). Never describe what the code does.
 - **Conflicts between defaults and existing conventions → existing conventions win.** If the codebase already commits to a heavily-commented style, a CSS-in-JS approach you'd avoid, or any pattern the rules above push against — match the codebase and note the friction in **Blockers / open questions**. Do not unilaterally "improve" the project.
 - **`cd` does not persist between Bash calls.** Each `Bash` invocation starts in the main conversation's working directory. Use absolute paths or chain commands with `&&` in a single call.
+
+## Stack defaults
+
+When the existing codebase is silent on a convention, default to these. **Existing project conventions always win** — these only fill gaps. None of them justify a refactor on their own.
+
+**TypeScript**
+- No `any`. Use `unknown` and narrow before use.
+- Prefer `type` over `interface` (use `interface` only when extending multiple types or augmenting a third-party type).
+- Use `satisfies` to enforce conformity without losing literal-type information.
+- Constrain generics meaningfully — `T extends Record<string, unknown>` beats `T extends any`.
+
+**React**
+- Function components only.
+- Don't use `useEffect` for data fetching — fetch on the server when possible, or use a real client data layer (SWR / React Query) when not.
+- Embrace React 19 actions and form-action APIs over manual `useState` + `onSubmit` plumbing.
+- Treat `useMemo` / `useCallback` as a *measured* optimization, not a default — assume React Compiler. Memoize trivial primitives never.
+- Stable `key` props on list items; never the array index when items can reorder.
+
+**Next.js (App Router)**
+- Server Components by default; only `"use client"` when interactivity / hooks / browser APIs require it.
+- Server Actions for mutations; Route Handlers (`app/api/`) only when integrating with external services or non-form clients.
+- Mark dynamic behavior explicitly: `export const dynamic = 'force-static' | 'force-dynamic'` at the segment level.
+- `error.tsx` + Suspense boundaries instead of hand-rolled loading / error flags.
+- Use `next/image`, `next/font`, `next/dynamic` — don't reach for raw `<img>` / `@font-face` / dynamic `import()` first.
+
+**Tailwind**
+- Mobile-first. Logical properties (`inset-*`, `start/end`, `block/inline`) over directional ones for i18n / RTL safety.
+- `clsx` / `cva` for dynamic class composition. No template-string concatenation of class names.
+- Avoid `@apply` outside a dedicated CSS file (`tailwind.css`, `globals.css`); inline utilities in JSX is the contract.
+- Pair semantic HTML (`<button>`, `<nav>`, `<section>`) with utility classes — utilities don't substitute for semantics or a11y attributes.
+
+**Performance**
+For pure React perf work (re-renders, client bundle, hydration, JS hot paths, long lists), invoke the `react` skill. For Next.js App Router patterns (Server Components, Server Actions, server-side caching, RSC serialization, server waterfalls), invoke the `nextjs` skill. Both encode prioritized rules + decision flows + spot-and-fix recipes; don't restate them here.
 
 ## Memory
 
