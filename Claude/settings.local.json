@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Skill(update-config)",
-      "Bash(claude mcp *)"
+      "Bash(claude mcp *)",
+      "Bash(claude plugin *)",
+      "Bash(claude agents *)",
+      "Bash(curl -fsSL https://raw.githubusercontent.com/softaworks/agent-toolkit/refs/heads/main/skills/skill-judge/SKILL.md)",
+      "Read(//tmp/**)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(chmod +x *)"
     ]
   }
 }
