@@ -10,10 +10,10 @@ A complete guide to setting up Claude Code, from installation to advanced config
 
 - macOS with a terminal (zsh, bash, fish all fine)
 - **`jq`** — required by `statusline.sh` and `scripts/guard-bash.sh`
-- **`node`** — required by the Codex plugin hooks and `npx`-based MCPs (Playwright, Firecrawl). Install via Homebrew, **not** nvm; nvm's lazy-load shim doesn't activate in non-interactive subprocesses, which breaks hooks and MCPs spawned by Claude Code.
+- **`node`** — required by the Codex plugin hooks and `npx`-based MCPs (Playwright, Firecrawl). Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If hooks/MCPs fail with `node: command not found`, see §4 → **Codex plugin — install + nvm gotcha** for the fix.
 
 ```bash
-brew install jq node
+brew install jq
 ```
 
 ### Install the CLI
