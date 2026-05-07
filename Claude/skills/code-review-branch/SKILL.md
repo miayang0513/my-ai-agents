@@ -1,6 +1,6 @@
 ---
 name: code-review-branch
-description: Review the entire current branch against its base (default `main`) — every commit on the branch plus any uncommitted local work — as a pre-PR full-branch audit. Use when the user wants their whole branch reviewed before opening a PR or merging, asks to "review my branch", "review before I open the PR", "code review this branch vs main/develop", "audit my feature branch", or wants the multi-commit diff (not just unstaged hunks) checked. Produces summary + severity-tagged issues + action items + lint/format output, then applies fixes as unstaged edits so the user's original work stays cleanly separated in `git diff --cached`. Use `code-review` instead when you only want pending unstaged/uncommitted work reviewed (no committed branch history).
+description: Review the entire current branch against its base (default `main`) — every commit on the branch plus any uncommitted local work — as a pre-PR full-branch audit. Use when the user wants their whole branch reviewed before opening a PR or merging, asks to "review my branch", "review before I open the PR", "code review this branch vs main/develop", "audit my feature branch", or wants the multi-commit diff (not just unstaged hunks) checked. Produces summary + severity-tagged issues + action items + lint/format output, then applies fixes as unstaged edits so the user's original work stays cleanly separated in `git diff --cached`. Use `code-review` instead when you only want pending unstaged/uncommitted work reviewed (no committed branch history). Supports findings-only mode (no fixes, no git state changed) when invoked by a read-only reviewer.
 ---
 
 # Code Review: Branch vs Base
@@ -14,6 +14,12 @@ Full-branch review covering every commit on the current branch since it diverged
 - **Never fabricate tool output.** Only paste output from checks you actually ran. If the repo has no supported check scripts, omit the tool-output section entirely.
 - **Never invent a base branch.** Confirm `main` exists; if not, ask which base to use (`develop`, `master`, release branch, etc.) before diffing.
 - **Never use `..` (two-dot) for the branch-vs-base diff.** It includes base-branch movement since divergence and gives the wrong answer. Always use `<base>...HEAD` (three-dot) — see the callout in step 3.
+
+## Modes
+
+**Default — review and apply fixes.** What an engineer wants pre-PR. Run all steps. Stage user's work as baseline (step 3); apply fixes as unstaged edits (step 5).
+
+**Findings-only.** Invoked when the caller says "no fixes" / "report only", or when the calling agent is `code-reviewer`. Never modify git state, never edit files. In step 3, skip `git add -A` and instead capture three diffs — `git diff`, `git diff --cached`, and `git diff <base>...HEAD` — treating their union as the user's work. Skip step 5 entirely. The report from step 4 is the deliverable.
 
 ## Procedure
 
@@ -36,6 +42,8 @@ Inspect the project's package manifest and run only check-scripts that are actua
 Do not install tooling. Do not run write-mode formatters. Do not run the full test suite unless the user explicitly asks.
 
 ### 3. Stage everything, then capture both diffs
+
+*Findings-only mode: skip `git add -A`. Capture three diffs instead — `git diff` (unstaged), `git diff --cached` (already-staged), and `git diff <base>...HEAD` (branch vs base) — and treat the union as the user's work. Don't modify git state.*
 
 ```
 git add -A
@@ -66,6 +74,8 @@ Then:
 Severity calibration: `blocker` = must fix before merge (bugs, regressions, security, broken types). `major` = should fix (design issues, missing tests for new logic). `minor` = should fix if cheap. `nit` = optional polish.
 
 ### 5. Apply fixes — leave them unstaged
+
+*Findings-only mode: skip this step entirely. The report from step 4 is the deliverable — never edit files.*
 
 Fix every Issue you listed and every warning/error from the check tools you ran. Constraints:
 
