@@ -82,10 +82,10 @@ cp CLAUDE.md             ~/.claude/CLAUDE.md
 cp settings.json         ~/.claude/settings.json
 cp settings.local.json   ~/.claude/settings.local.json
 cp statusline.sh         ~/.claude/statusline.sh
-mkdir -p ~/.claude/scripts && cp scripts/guard-bash.sh ~/.claude/scripts/guard-bash.sh
+mkdir -p ~/.claude/scripts && cp scripts/*.sh         ~/.claude/scripts/
 mkdir -p ~/.claude/agents  && cp agents/*.md          ~/.claude/agents/
 mkdir -p ~/.claude/skills && cp -R skills/* ~/.claude/skills/
-chmod +x ~/.claude/statusline.sh ~/.claude/scripts/guard-bash.sh
+chmod +x ~/.claude/statusline.sh ~/.claude/scripts/*.sh
 ```
 
 After copying `settings.json`, the listed marketplaces and `enabledPlugins` are *known* to Claude Code but the plugin payloads still need to be fetched. Open a session, run `/plugin`, and install each plugin shown as enabled. See §4 → **Plugins & Skills** for the full list.

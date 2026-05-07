@@ -1,0 +1,58 @@
+#!/bin/bash
+# PostToolUse hook — mirror whitelisted ~/.claude/ config files into the
+# my-ai-agents snapshot repo so other devices can bootstrap from it.
+#
+# Mirror-only: never auto-commits. User reviews `git status` and commits manually.
+# Secret guard: refuses to mirror files containing secret-looking patterns,
+# logs the skip to ~/.claude/sync-to-snapshot.log instead.
+
+set -uo pipefail
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+[ -z "$FILE_PATH" ] && exit 0
+
+CLAUDE_DIR="/Users/mian.yang/.claude"
+SNAPSHOT_DIR="/Users/mian.yang/Repos/my-ai-agents/Claude"
+LOG="$CLAUDE_DIR/sync-to-snapshot.log"
+
+# Only operate on files under ~/.claude/
+case "$FILE_PATH" in
+  "$CLAUDE_DIR"/*) ;;
+  *) exit 0 ;;
+esac
+
+REL="${FILE_PATH#$CLAUDE_DIR/}"
+
+# Whitelist: top-level config + specific subdirs. Anything else (cache/, sessions/,
+# projects/, plugins/, history.jsonl, etc.) is ignored.
+case "$REL" in
+  CLAUDE.md|settings.json|settings.local.json|statusline.sh) ;;
+  scripts/*|agents/*|skills/*) ;;
+  *) exit 0 ;;
+esac
+
+# Secret guard: scan source for high-confidence secret signatures.
+# False positives are preferred over leaks — when in doubt, skip + log.
+if [ -f "$FILE_PATH" ] && grep -qiE \
+  -e 'sk-[a-zA-Z0-9_-]{20,}' \
+  -e 'fc-[a-f0-9]{20,}' \
+  -e 'ghp_[a-zA-Z0-9]{20,}' \
+  -e 'github_pat_[a-zA-Z0-9_]{20,}' \
+  -e 'xox[bpas]-[a-zA-Z0-9-]{20,}' \
+  -e 'AKIA[A-Z0-9]{16}' \
+  -e 'AIza[0-9A-Za-z_-]{35}' \
+  -e 'eyJ[a-zA-Z0-9_-]{20,}\.[a-zA-Z0-9_-]{20,}\.[a-zA-Z0-9_-]{20,}' \
+  -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' \
+  -e '(api[_-]?key|secret|password|token|bearer)["'\'']?\s*[:=]\s*["'\''][^"'\'' ]{16,}' \
+  "$FILE_PATH"; then
+  printf '%s [BLOCKED] %s contains potential secret — not mirrored\n' \
+    "$(date '+%Y-%m-%d %H:%M:%S')" "$FILE_PATH" >> "$LOG"
+  exit 0
+fi
+
+DEST="$SNAPSHOT_DIR/$REL"
+mkdir -p "$(dirname "$DEST")"
+cp "$FILE_PATH" "$DEST"
+exit 0
