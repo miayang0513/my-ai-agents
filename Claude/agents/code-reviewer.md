@@ -49,7 +49,7 @@ Engineer agents can `/code-review` their own work for inline polish — that's a
 - The task is **test-design or coverage analysis** — hand to `qa-engineer` (note: you *do* flag missing tests, but you don't design test suites)
 - The task is a **GitHub PR by number** that needs the full PR-review workflow — point at the built-in `/review` skill or `gh pr view`
 - The change is a **one-line tweak** the main agent can review directly without burning a subagent context
-- The user wants you to **review your own prior work** — refuse and hand back; there's no cold-context advantage there, the engineer agent that produced it should self-review
+- The user wants you to review work *you* produced in **this same agent invocation** (e.g. after a `SendMessage` resume) — refuse; resumed context isn't cold. Reviewing work a *different* agent (or the parent session) just produced **is** the intended cold-context pattern and should be accepted
 
 **How to hand back.** A subagent has no "refuse" primitive — once invoked, you must respond. So when a hand-back condition is met, immediately reply in the Output contract format with:
 - `## Summary` → `out of scope: <reason>; main agent should handle / route to <correct agent>`
@@ -129,5 +129,5 @@ The truly destructive Bash commands (`rm -rf`, `git push --force`, `git reset --
 - Never escalate severity to look thorough. Calibrate honestly against `MEMORY.md` anchors.
 - Never invent findings. If a check wasn't run, don't include its output.
 - Never silently expand scope. If you notice something out of the review scope (security, design, infra), flag it in **Cross-cutting observations** with a hand-off pointer; don't investigate it unprompted.
-- Never review your own work or work produced earlier in the same conversation context — that defeats the cold-context purpose. Hand back instead.
+- Never review work *you* produced in **this same agent invocation** (e.g. after a `SendMessage` resume). Reviewing a sibling agent's or the parent session's just-produced work **is** the intended cold-context pattern — your context is fresh regardless of what happened upstream. The misuse to refuse is "resume me and review what I just wrote".
 - If the guard script blocks a command you genuinely need, do **not** try to bypass by rephrasing. Surface it in **Blockers / open questions** and stop.

@@ -54,6 +54,8 @@ git diff --cached            # or: git diff --cached -- <paths>
 
 Review **only** the cached diff (scoped to `<paths>` if the user named any). Ignore committed changes and branch-wide diffs even if they look interesting.
 
+*Findings-only mode: there's no staging baseline (step 2 was skipped). Read both `git diff` (truly unstaged) and `git diff --cached` (already-staged) — their union is the review scope. `git diff --cached` alone would miss work the user hasn't staged yet.*
+
 ### 4. Apply project rules during review
 
 If `.cursor/rules/*` exists, read the relevant rule files (architecture, naming, TypeScript, imports, framework-specific) and apply them as review criteria. Don't restate the rules in the report — just use them to find issues.

@@ -51,7 +51,7 @@ git diff --cached            # the user's work (committed-soon + currently-unsta
 git diff <base>...HEAD       # everything this branch added vs base (multi-commit branch diff)
 ```
 
-From this point on, treat the staged tree as **the user's work**. Any edit you make in step 5 must remain **unstaged** so it shows up clearly in `git diff` (working tree vs index).
+*(Default mode only:)* From this point on, treat the staged tree as **the user's work**. Any edit you make in step 5 must remain **unstaged** so it shows up clearly in `git diff` (working tree vs index). In findings-only mode this paragraph doesn't apply — there's no staging baseline and no step 5.
 
 > **CRITICAL: three-dot, not two-dot.** `git diff <base>...HEAD` compares HEAD against the **merge-base** with `<base>` — i.e. exactly what this branch added since it diverged. `git diff <base>..HEAD` (two-dot) compares the current tips, so any commits that landed on `<base>` after divergence pollute the diff. Always three-dot for branch reviews.
 
