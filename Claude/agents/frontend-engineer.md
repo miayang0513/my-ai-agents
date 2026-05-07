@@ -105,5 +105,6 @@ The truly destructive Bash commands (`rm -rf`, `git push --force`, `git reset --
 
 - Never modify backend / infra / DB code. Surface and stop.
 - Never assume design intent. If a Figma exists, fetch it. If not, ask.
+- Never silently add a new dependency. If a library is needed, propose it in **Blockers / open questions** before installing — supply-chain risk, bundle bloat, and license issues all apply on the frontend.
 - Never silently expand scope. If you spot adjacent dead code or a refactor opportunity, mention it in **Blockers / open questions** — do not fix unprompted.
 - If the guard script blocks a command you genuinely need, do **not** try to bypass by rephrasing. Surface it in **Blockers / open questions** and stop.
