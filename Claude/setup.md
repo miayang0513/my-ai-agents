@@ -94,7 +94,7 @@ After copying `settings.json`, the listed marketplaces and `enabledPlugins` are 
 
 ### Per-device steps (NOT covered by the snapshot)
 
-Three things live outside `~/.claude/` and must be redone on every new machine:
+Four things live outside `~/.claude/` and must be redone on every new machine:
 
 **1. Claude.ai-managed MCP connectors** — tied to your account, not local files. After logging in, connect each at [claude.ai/settings/connectors](https://claude.ai/settings/connectors):
 
@@ -112,6 +112,14 @@ claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- npx -y firecrawl-mcp
 ```
 
 **3. `FIRECRAWL_API_KEY`** — secret, intentionally not in this repo. Pull from your password manager, or generate a new one at [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys) (see §4 → MCP servers for the walkthrough).
+
+**4. Snapshot path override** — only needed if your clone of `my-ai-agents` isn't at `~/Repos/my-ai-agents`. The auto-sync hooks (`scripts/sync-to-snapshot.sh`, `scripts/auto-commit-snapshot.sh`) default to that path. To point them somewhere else, create `~/.claude/.sync-config`:
+
+```bash
+echo 'SNAPSHOT_REPO="$HOME/code/my-ai-agents"' > ~/.claude/.sync-config
+```
+
+`.sync-config` is per-device (deliberately not in the snapshot's whitelist) so each machine can have its own path. Username variation is handled automatically — both scripts use `$HOME` rather than a hardcoded `/Users/<name>/`.
 
 ---
 

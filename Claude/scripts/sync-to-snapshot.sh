@@ -13,8 +13,12 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 [ -z "$FILE_PATH" ] && exit 0
 
-CLAUDE_DIR="/Users/mian.yang/.claude"
-SNAPSHOT_DIR="/Users/mian.yang/Repos/my-ai-agents/Claude"
+# Path resolution. Defaults assume ~/Repos/my-ai-agents; override per-device by
+# creating ~/.claude/.sync-config with: SNAPSHOT_REPO="/your/path/to/my-ai-agents"
+CLAUDE_DIR="$HOME/.claude"
+SNAPSHOT_REPO="$HOME/Repos/my-ai-agents"
+[ -f "$CLAUDE_DIR/.sync-config" ] && . "$CLAUDE_DIR/.sync-config"
+SNAPSHOT_DIR="$SNAPSHOT_REPO/Claude"
 LOG="$CLAUDE_DIR/sync-to-snapshot.log"
 
 # Only operate on files under ~/.claude/

@@ -7,10 +7,14 @@
 
 set -uo pipefail
 
-REPO=/Users/mian.yang/Repos/my-ai-agents
-LOG=/Users/mian.yang/.claude/sync-to-snapshot.log
+# Path resolution. Defaults assume ~/Repos/my-ai-agents; override per-device by
+# creating ~/.claude/.sync-config with: SNAPSHOT_REPO="/your/path/to/my-ai-agents"
+CLAUDE_DIR="$HOME/.claude"
+SNAPSHOT_REPO="$HOME/Repos/my-ai-agents"
+[ -f "$CLAUDE_DIR/.sync-config" ] && . "$CLAUDE_DIR/.sync-config"
+LOG="$CLAUDE_DIR/sync-to-snapshot.log"
 
-cd "$REPO" 2>/dev/null || exit 0
+cd "$SNAPSHOT_REPO" 2>/dev/null || exit 0
 
 # Nothing to commit under Claude/ → silent no-op
 [ -z "$(git status --porcelain Claude/)" ] && exit 0
