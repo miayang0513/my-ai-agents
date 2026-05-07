@@ -1,6 +1,6 @@
 ---
 name: code-review-branch
-description: Review the entire current branch against its base (default `main`) — every commit on the branch plus any uncommitted local work — as a pre-PR full-branch audit. Use when the user wants their whole branch reviewed before opening a PR or merging, asks to "review my branch", "review before I open the PR", "code review this branch vs main/develop", "audit my feature branch", or wants the multi-commit diff (not just unstaged hunks) checked. Produces summary + severity-tagged issues + action items + lint/format output, then applies fixes as unstaged edits so the user's original work stays cleanly separated in `git diff --cached`.
+description: Review the entire current branch against its base (default `main`) — every commit on the branch plus any uncommitted local work — as a pre-PR full-branch audit. Use when the user wants their whole branch reviewed before opening a PR or merging, asks to "review my branch", "review before I open the PR", "code review this branch vs main/develop", "audit my feature branch", or wants the multi-commit diff (not just unstaged hunks) checked. Produces summary + severity-tagged issues + action items + lint/format output, then applies fixes as unstaged edits so the user's original work stays cleanly separated in `git diff --cached`. Use `code-review` instead when you only want pending unstaged/uncommitted work reviewed (no committed branch history).
 ---
 
 # Code Review: Branch vs Base
@@ -13,6 +13,7 @@ Full-branch review covering every commit on the current branch since it diverged
 - **Never stage your fixes.** The user's existing work stays staged; your edits stay unstaged so `git diff` shows a clean separation.
 - **Never fabricate tool output.** Only paste output from checks you actually ran. If the repo has no supported check scripts, omit the tool-output section entirely.
 - **Never invent a base branch.** Confirm `main` exists; if not, ask which base to use (`develop`, `master`, release branch, etc.) before diffing.
+- **Never use `..` (two-dot) for the branch-vs-base diff.** It includes base-branch movement since divergence and gives the wrong answer. Always use `<base>...HEAD` (three-dot) — see the callout in step 3.
 
 ## Procedure
 
@@ -44,7 +45,9 @@ git diff <base>...HEAD       # everything this branch added vs base (multi-commi
 
 From this point on, treat the staged tree as **the user's work**. Any edit you make in step 5 must remain **unstaged** so it shows up clearly in `git diff` (working tree vs index).
 
-Note the `...` (three-dot) syntax on the branch diff — it compares HEAD against the merge-base with `<base>`, which is what you want for "what this branch changed". Two-dot would include base-branch movement and is wrong here.
+> **CRITICAL: three-dot, not two-dot.** `git diff <base>...HEAD` compares HEAD against the **merge-base** with `<base>` — i.e. exactly what this branch added since it diverged. `git diff <base>..HEAD` (two-dot) compares the current tips, so any commits that landed on `<base>` after divergence pollute the diff. Always three-dot for branch reviews.
+
+**Large-branch fallback.** If the branch diff exceeds ~2000 lines or ~50 files (check with `git diff <base>...HEAD --shortstat` and `--stat`), switch to per-file summary mode: list every changed file with a one-line summary, flag the hot paths (core logic, security-sensitive, large net-new modules), then deep-dive only the flagged files. Don't dump 5000 lines of issues into the report — that defeats the purpose of a review. Call out in the report header that you used summary mode and which files got the deep read.
 
 ### 4. Write the review report
 

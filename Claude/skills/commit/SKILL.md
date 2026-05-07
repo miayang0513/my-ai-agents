@@ -11,6 +11,8 @@ Prepare a Conventional Commit message for the current working tree, then create 
 
 ## Default workflow
 
+**Branch first:** if the user supplied a draft message, you're *editing* it (preserve their voice and intent; only fix Conventional-Commit shape and obvious issues). If they didn't, draft from scratch.
+
 1. Run `git status`, `git diff`, `git diff --cached`, and `git log -n 5 --oneline` to see the working tree, what's staged, and recent message style.
 2. If nothing is staged but there are unstaged changes, stage them with `git add -A` and re-check `git diff --cached`. If there are no changes at all, say so and stop.
 3. Pick the smallest coherent scope. If the diff spans unrelated areas (e.g. app + infra, src + generated output), call it out and propose splitting before committing.
@@ -20,16 +22,9 @@ Prepare a Conventional Commit message for the current working tree, then create 
 
 ## Message format
 
-```
-type(scope): short summary
+`git log -n 5 --oneline` is the spec, not Conventional Commits canon. Match the existing tone — many repos drop scope, some require a ticket prefix (`TASK-123:`), some use sentence-case bodies, some prefix with package names instead of types. Deviate from CC when the log does.
 
-optional body
-```
-
-- Lowercase type and scope.
-- Summary is specific and concrete; no filler ("update stuff", "various changes").
 - Body only when it clarifies *why* or flags a tradeoff. Skip it otherwise.
-- One logical change per commit.
 - Add a ticket prefix (e.g. `TASK-123`) only if the repo's history already does.
 
 ## Modes
@@ -61,6 +56,13 @@ optional body
 - **Never** push. `git push` is a separate, explicit request.
 - **Never** use `-i` flags (interactive rebase/add); they break in this environment.
 - **Never** skip hooks (`--no-verify`) or signing flags unless the user explicitly asks.
+
+## Common scenarios
+
+- **Pre-commit hook reformats files mid-commit.** The commit aborts with a dirty tree. Re-stage the now-formatted files and run `git commit` again — do *not* `--amend` (the previous commit isn't yours) and do *not* `--no-verify`.
+- **Pre-commit fails on staged files but the user wants to commit a subset.** Use `git add -p` to split hunks; commit the clean subset first, leave the failing changes unstaged for the user to address.
+- **Monorepo with per-package lint/format.** Check `pnpm-workspace.yaml`, `nx.json`, `lerna.json`, or `turbo.json` first to find the affected package, then run scripts from that package's directory — running root-level scripts often misses or duplicates work.
+- **User provided a draft message.** Edit, don't replace. Preserve their voice, phrasing, and emphasis. Fix only the Conventional-Commit shape (type, scope, casing) and obvious issues (typos, wrong type). If their message is already fine, say so and use it verbatim.
 
 ## Repo-specific checks
 

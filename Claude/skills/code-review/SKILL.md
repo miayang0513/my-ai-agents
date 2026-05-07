@@ -14,11 +14,16 @@ Review only what the user has not yet committed. Stage their work, leave your fi
 - **Never run:** `git commit`, `git commit --amend`, `git reset`, `git push`, `git rebase`, `git stash drop`.
 - **Never stage your own fixes.** Only the user's pre-existing work stays staged; your edits remain unstaged so the user sees a clean before/after in `git diff`.
 
+## Defaults
+
+- **Package manager:** detect from the lockfile — `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `bun.lockb` / `bun.lock` → bun, else npm. Use that PM for every script run below.
+- **Review target:** if the user names a specific file/path (e.g. "review `src/auth.ts`"), scope every `git add` and `git diff --cached` to that path. Otherwise, full working tree.
+
 ## Procedure
 
 ### 1. Run the repo's check scripts (only ones that exist)
 
-Read `package.json` → `scripts`. Run only what's defined; don't invent commands. Use the repo's package manager (`pnpm`/`npm`/`yarn`); detect from lockfile if unsure.
+Read `package.json` → `scripts`. Run only what's defined; don't invent commands.
 
 - `scripts.lint` → run it, capture full stdout + stderr.
 - `scripts["format:check"]` → run it, capture stdout + stderr.
@@ -28,16 +33,18 @@ If none of these exist, skip tool output entirely — this becomes a findings-on
 
 ### 2. Lock in the user's work as the staged baseline
 
-Run `git add -A` (or `git add .` from repo root). From this point forward, the staged diff IS the user's work. Do not restage, unstage, or rewrite it.
+If the user named specific paths, run `git add -- <paths>`. Otherwise run `git add -A` from the repo root. From this point forward, the staged diff IS the user's work. Do not restage, unstage, or rewrite it.
+
+Deleted files: `git add` will stage the deletion and `git diff --cached` will show it. Review the deletion intent (was it accidental? does anything still import it?), but don't re-add files the user clearly meant to remove.
 
 ### 3. Determine review scope
 
 ```
 git status
-git diff --cached
+git diff --cached            # or: git diff --cached -- <paths>
 ```
 
-Review **only** the cached diff. Ignore committed changes and branch-wide diffs even if they look interesting.
+Review **only** the cached diff (scoped to `<paths>` if the user named any). Ignore committed changes and branch-wide diffs even if they look interesting.
 
 ### 4. Apply project rules during review
 
