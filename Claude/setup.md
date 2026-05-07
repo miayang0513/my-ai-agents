@@ -84,6 +84,7 @@ cp settings.local.json   ~/.claude/settings.local.json
 cp statusline.sh         ~/.claude/statusline.sh
 mkdir -p ~/.claude/scripts && cp scripts/guard-bash.sh ~/.claude/scripts/guard-bash.sh
 mkdir -p ~/.claude/agents  && cp agents/*.md          ~/.claude/agents/
+mkdir -p ~/.claude/skills && cp -R skills/* ~/.claude/skills/
 chmod +x ~/.claude/statusline.sh ~/.claude/scripts/guard-bash.sh
 ```
 
