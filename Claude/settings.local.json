@@ -9,7 +9,11 @@
       "Read(//tmp/**)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(chmod +x *)"
+      "Bash(chmod +x *)",
+      "Bash(echo \"---exit:$?---\")",
+      "Read(//private/etc/**)",
+      "Read(//private/etc/paths.d/**)",
+      "Bash(brew uninstall *)"
     ]
   }
 }
