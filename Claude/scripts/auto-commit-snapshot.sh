@@ -7,6 +7,13 @@
 
 set -uo pipefail
 
+# Recursion guard — this script calls `claude --print` to generate a commit
+# message; that child claude session also fires its Stop hook, which would
+# re-enter this script. Set an env-var sentinel so the recursive invocation
+# bails out immediately. Without this, fork-bomb / git-lock contention.
+[ -n "${CLAUDE_AUTOCOMMIT_RUNNING:-}" ] && exit 0
+export CLAUDE_AUTOCOMMIT_RUNNING=1
+
 # Path resolution. Defaults assume ~/Repos/my-ai-agents; override per-device by
 # creating ~/.claude/.sync-config with: SNAPSHOT_REPO="/your/path/to/my-ai-agents"
 CLAUDE_DIR="$HOME/.claude"
@@ -15,9 +22,6 @@ SNAPSHOT_REPO="$HOME/Repos/my-ai-agents"
 LOG="$CLAUDE_DIR/sync-to-snapshot.log"
 
 cd "$SNAPSHOT_REPO" 2>/dev/null || exit 0
-
-# Nothing to commit under Claude/ → silent no-op
-[ -z "$(git status --porcelain Claude/)" ] && exit 0
 
 # Skip mid-operation states
 { [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ] || \
@@ -37,6 +41,26 @@ git symbolic-ref -q HEAD >/dev/null || {
   printf '%s [SKIP] user has staged changes\n' "$(date '+%Y-%m-%d %H:%M:%S')" >> "$LOG"
   exit 0
 }
+
+# Drift sweep: mirror every whitelisted live file into snapshot to catch
+# changes that bypassed the PostToolUse Edit|Write hook (harness permission
+# updates writing settings.local.json directly, manual edits outside Claude,
+# etc.). Reuses sync-to-snapshot.sh so whitelist + secret guard stay single-
+# sourced.
+{
+  for f in CLAUDE.md settings.json settings.local.json statusline.sh; do
+    [ -f "$CLAUDE_DIR/$f" ] && printf '%s\n' "$CLAUDE_DIR/$f"
+  done
+  [ -d "$CLAUDE_DIR/scripts" ] && find "$CLAUDE_DIR/scripts" -type f
+  [ -d "$CLAUDE_DIR/agents" ]  && find "$CLAUDE_DIR/agents"  -type f
+  [ -d "$CLAUDE_DIR/skills" ]  && find "$CLAUDE_DIR/skills"  -type f
+} | while IFS= read -r f; do
+  printf '{"tool_name":"Edit","tool_input":{"file_path":"%s"}}' "$f" \
+    | bash "$CLAUDE_DIR/scripts/sync-to-snapshot.sh"
+done
+
+# Nothing to commit under Claude/ after sweep → silent no-op
+[ -z "$(git status --porcelain Claude/)" ] && exit 0
 
 git add Claude/
 
@@ -66,7 +90,7 @@ $DIFFBODY
 EOF
 )
 
-MSG=$(printf '%s' "$PROMPT" | claude --print --bare --no-session-persistence --model haiku 2>>"$LOG" \
+MSG=$(printf '%s' "$PROMPT" | claude --print --no-session-persistence --model haiku 2>>"$LOG" \
   | head -1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr -d '`"')
 
 # Validate: must be a conventional-commits line, not a generic "auto-sync"
