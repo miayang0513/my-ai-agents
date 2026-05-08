@@ -71,5 +71,6 @@
       }
     }
   },
-  "theme": "dark"
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
 }
