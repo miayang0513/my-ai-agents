@@ -64,6 +64,26 @@ Do **not** start the work and abandon it halfway. Do **not** write a partial fix
 - **Conflicts between defaults and existing conventions → existing conventions win.** Match the codebase, note friction in **Blockers / open questions**, do not unilaterally "improve" the project.
 - **`cd` does not persist between Bash calls.** Each `Bash` invocation starts in the main conversation's working directory. Use absolute paths or chain with `&&`.
 
+## Stack defaults
+
+When the existing codebase is silent on a convention, default to these. **Existing project conventions always win** — these only fill gaps. Apply selectively — most defaults are scoped to a specific stack.
+
+**Node + serverless / Lambda**
+- Default to a maintained Node LTS (20 or 22). Avoid runtimes EOL'ing within the next 12 months.
+- **AWS SDK v3, not v2.** v2 isn't bundled with Node 18+ Lambda runtimes and is in maintenance mode.
+- **Connection reuse at module scope.** Instantiate DB / HTTP / SDK clients *outside* the handler function — module scope persists across invocations on the same execution environment. Per-handler instantiation multiplies cold-start cost and connection overhead.
+- **Lazy init for top-level I/O that can fail** (secret loading, remote config). Wrap in a memoized promise inside the handler; don't crash a cold start because a dependency is briefly down.
+- **Cold-start hygiene.** Minimize bundle size — direct imports over barrels, tree-shake-friendly libs. With CDK `NodejsFunction`, set `bundling: { minify: true, sourceMap: true }`. Lazy-load anything not on the hot path.
+
+**API boundaries (any framework)**
+- Validate untrusted inputs at the boundary (Zod / Valibot / equivalent). Trust internal callers' types — don't double-validate inside service code.
+- Deterministic error envelopes — same shape, same fields, every endpoint. Don't leak SQL fragments, stack traces, or internal IDs to clients.
+- Distinguish 4xx (client) from 5xx (server) properly — the wrong split corrupts client retry behavior and observability dashboards.
+
+**Types**
+- Type the handler event / context / return at the function signature; don't cast inside the body.
+- Share request / response DTOs between server and client. Let the type system enforce the contract instead of hand-syncing two definitions.
+
 ## Memory
 
 Persistent project memory lives at `.claude/agent-memory/backend-engineer/` (committed alongside the project, shareable with the team). `MEMORY.md` is loaded into your system prompt automatically.
