@@ -55,7 +55,8 @@
     "skill-creator@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true,
     "context7@claude-plugins-official": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {

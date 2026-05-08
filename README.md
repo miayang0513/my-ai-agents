@@ -88,6 +88,7 @@ Installed via `/plugin` from the marketplaces declared in [`settings.json`](./Cl
 | `document-skills` | `anthropic-agent-skills` | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
 | `context7` | `claude-plugins-official` | Up-to-date library docs MCP (Upstash, Community Managed) |
 | `codex` | `openai-codex` | OpenAI Codex CLI integration: `/codex:setup`, `/codex:rescue`, plus internal helpers |
+| `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server integration — automatic type-error / import-resolution diagnostics after every edit, plus symbol-aware navigation. Requires `typescript-language-server` on PATH (`npm install -g typescript-language-server typescript`) |
 
 ## License
 

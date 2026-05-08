@@ -237,6 +237,7 @@ Plugin marketplaces are git-backed sources of plugins. Three configured on this 
 | `document-skills` | anthropic-agent-skills | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
 | `context7` | claude-plugins-official | Up-to-date library docs MCP (Upstash, Community Managed) |
 | `codex` | openai-codex | OpenAI Codex CLI integration: `/codex:setup`, `/codex:rescue`, plus internal helpers |
+| `typescript-lsp` | claude-plugins-official | Wires Claude into the TypeScript Language Server. After every Edit/Write, the LSP reports type errors / missing imports / syntax issues back in the same turn — Claude fixes them before the turn ends. Also enables symbol-aware navigation (jump-to-def, find-references, type-on-hover, call hierarchy). Requires the `typescript-language-server` binary on `PATH` — `npm install -g typescript-language-server typescript`. Press **Ctrl+O** when the "diagnostics found" indicator appears to view inline. |
 
 #### Codex plugin — install + nvm gotcha
 
