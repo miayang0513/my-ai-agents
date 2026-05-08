@@ -23,6 +23,7 @@ cd ~/Repos/my-ai-agents/Claude
 | [`scripts/`](./Claude/scripts) | `guard-bash.sh` (destructive-command blocker), `sync-to-snapshot.sh` + `auto-commit-snapshot.sh` (auto-mirror `~/.claude/` back into this repo) |
 | [`agents/`](./Claude/agents) | Custom role-based subagents — see below |
 | [`skills/`](./Claude/skills) | Hand-written skills — see below |
+| [`rules/`](./Claude/rules) | Path-scoped rules that auto-load when matching files are open — see below |
 | [`setup.md`](./Claude/setup.md) | The full setup guide |
 
 ## Subagents
@@ -46,6 +47,21 @@ cd ~/Repos/my-ai-agents/Claude
 | [`code-review`](./Claude/skills/code-review) | Review pending uncommitted work; supports findings-only mode |
 | [`code-review-branch`](./Claude/skills/code-review-branch) | Pre-PR full-branch audit vs base; supports findings-only mode |
 | [`skill-judge`](./Claude/skills/skill-judge) | Score a skill against an 8-dimension rubric (120 points) |
+| [`react`](./Claude/skills/react) | Client-side React perf rules + decision flow + spot-and-fix recipes |
+| [`nextjs`](./Claude/skills/nextjs) | Next.js App Router perf (server components, caching, RSC, hydration) |
+
+## Rules
+
+Path-scoped instructions that auto-load when Claude opens matching files (no need to invoke them — they apply to the main agent and subagents alike). Topic-per-file, tightly globbed.
+
+| Rule | Triggers on | Covers |
+| --- | --- | --- |
+| [`typescript`](./Claude/rules/typescript.md) | `**/*.{ts,tsx}` | No `any`, prefer `type`, `satisfies`, generic constraints, boundary validation, error envelopes |
+| [`react`](./Claude/rules/react.md) | `**/*.{tsx,jsx}` | Function components, no `useEffect` for fetching, React 19 actions, measured `useMemo`, stable keys |
+| [`nextjs`](./Claude/rules/nextjs.md) | `app/**`, `pages/**`, `next.config.*`, `middleware.ts` | Server Components by default, Server Actions, dynamic markers, `next/*` primitives, cache hygiene |
+| [`tailwind`](./Claude/rules/tailwind.md) | `**/*.{tsx,jsx}`, tailwind/global CSS | Mobile-first, logical properties, `clsx`/`cva`, no `@apply` outside CSS, semantic HTML |
+| [`node-lambda`](./Claude/rules/node-lambda.md) | `handlers/**`, `lambda/**`, `*.handler.{ts,js}`, etc. | Node LTS, AWS SDK v3, connection reuse, lazy init, cold-start hygiene |
+| [`aws-cdk`](./Claude/rules/aws-cdk.md) | `cdk.json`, `bin/*.ts`, `lib/*-stack.ts`, `cdk/**`, `infra/**` | CDK v2, no hardcoded names, `NodejsFunction` bundling, tag stateful resources, `cdk-nag` |
 
 ## Hooks
 
