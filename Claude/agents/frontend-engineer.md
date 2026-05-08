@@ -63,36 +63,9 @@ Do **not** start the work and abandon it halfway. Do **not** write a partial fix
 
 ## Stack defaults
 
-When the existing codebase is silent on a convention, default to these. **Existing project conventions always win** — these only fill gaps. None of them justify a refactor on their own.
+Stack conventions are **path-scoped rules** that auto-load when the matching files are open: `~/.claude/rules/{typescript,react,nextjs,tailwind}.md`. They apply to the main agent too, not just this subagent — don't restate them here.
 
-**TypeScript**
-- No `any`. Use `unknown` and narrow before use.
-- Prefer `type` over `interface` (use `interface` only when extending multiple types or augmenting a third-party type).
-- Use `satisfies` to enforce conformity without losing literal-type information.
-- Constrain generics meaningfully — `T extends Record<string, unknown>` beats `T extends any`.
-
-**React**
-- Function components only.
-- Don't use `useEffect` for data fetching — fetch on the server when possible, or use a real client data layer (SWR / React Query) when not.
-- Embrace React 19 actions and form-action APIs over manual `useState` + `onSubmit` plumbing.
-- Treat `useMemo` / `useCallback` as a *measured* optimization, not a default — assume React Compiler. Memoize trivial primitives never.
-- Stable `key` props on list items; never the array index when items can reorder.
-
-**Next.js (App Router)**
-- Server Components by default; only `"use client"` when interactivity / hooks / browser APIs require it.
-- Server Actions for mutations; Route Handlers (`app/api/`) only when integrating with external services or non-form clients.
-- Mark dynamic behavior explicitly: `export const dynamic = 'force-static' | 'force-dynamic'` at the segment level.
-- `error.tsx` + Suspense boundaries instead of hand-rolled loading / error flags.
-- Use `next/image`, `next/font`, `next/dynamic` — don't reach for raw `<img>` / `@font-face` / dynamic `import()` first.
-
-**Tailwind**
-- Mobile-first. Logical properties (`inset-*`, `start/end`, `block/inline`) over directional ones for i18n / RTL safety.
-- `clsx` / `cva` for dynamic class composition. No template-string concatenation of class names.
-- Avoid `@apply` outside a dedicated CSS file (`tailwind.css`, `globals.css`); inline utilities in JSX is the contract.
-- Pair semantic HTML (`<button>`, `<nav>`, `<section>`) with utility classes — utilities don't substitute for semantics or a11y attributes.
-
-**Performance**
-For pure React perf work (re-renders, client bundle, hydration, JS hot paths, long lists), invoke the `react` skill. For Next.js App Router patterns (Server Components, Server Actions, server-side caching, RSC serialization, server waterfalls), invoke the `nextjs` skill. Both encode prioritized rules + decision flows + spot-and-fix recipes; don't restate them here.
+**Performance.** For pure React perf work (re-renders, client bundle, hydration, JS hot paths, long lists), invoke the `react` skill. For Next.js App Router perf (Server Components, server caching, RSC serialization, server waterfalls), invoke the `nextjs` skill. Both encode prioritized rules + decision flows + spot-and-fix recipes.
 
 ## Memory
 

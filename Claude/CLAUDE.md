@@ -69,6 +69,12 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 - Don't add `Co-Authored-By: Claude …` trailers to commit messages.
 
+## 6. Output Language
+
+- **Reply in the language I use.** If I write in Chinese, reply in Chinese. Don't translate or rewrite my messages.
+- **Generated code, comments, file names, commit messages, error strings, and docs are always English** — regardless of conversation language.
+- **Quoted external content** (Notion / API / DB / user-provided text) keeps its original language. Don't translate when displaying it.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

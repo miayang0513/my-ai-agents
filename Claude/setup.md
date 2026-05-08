@@ -72,6 +72,8 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 - [`./statusline.sh`](./statusline.sh) → `~/.claude/statusline.sh` — custom status line (wired up in `settings.json`)
 - [`./scripts/guard-bash.sh`](./scripts/guard-bash.sh) → `~/.claude/scripts/guard-bash.sh` — destructive-Bash-command blocker (wired up under `hooks.PreToolUse` in `settings.json`)
 - [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents (frontend, backend, devops, PM, UX, QA, security). See §4 → **Subagents**.
+- [`./skills/`](./skills/) → `~/.claude/skills/` — hand-written skills loaded on demand. See §4 → **Plugins & Skills**.
+- [`./rules/`](./rules/) → `~/.claude/rules/` — path-scoped rules that auto-load when matching files are open. See §4 → **Rules**.
 
 Run from inside the `Claude/` directory of this repo:
 
@@ -84,7 +86,8 @@ cp settings.local.json   ~/.claude/settings.local.json
 cp statusline.sh         ~/.claude/statusline.sh
 mkdir -p ~/.claude/scripts && cp scripts/*.sh         ~/.claude/scripts/
 mkdir -p ~/.claude/agents  && cp agents/*.md          ~/.claude/agents/
-mkdir -p ~/.claude/skills && cp -R skills/* ~/.claude/skills/
+mkdir -p ~/.claude/skills  && cp -R skills/*          ~/.claude/skills/
+mkdir -p ~/.claude/rules   && cp rules/*.md           ~/.claude/rules/
 chmod +x ~/.claude/statusline.sh ~/.claude/scripts/*.sh
 ```
 
@@ -272,6 +275,41 @@ Hand-written skills live next to your config:
 - Project: `<repo>/.claude/skills/<name>/SKILL.md`
 
 Each skill is a folder with a `SKILL.md` describing what it does and when to trigger. Create one with `/skill-creator`.
+
+### Rules
+
+Rules are path-scoped instructions that **auto-load** when Claude opens a matching file. Unlike skills (which load on demand) or CLAUDE.md (which loads every session), rules combine the best of both: always present *when relevant*, absent otherwise. They apply to the main agent and all subagents, no invocation required.
+
+**Layout** — one topic per file under `~/.claude/rules/`. The `paths:` frontmatter is a list of globs; if omitted, the rule loads unconditionally (same priority as `~/.claude/CLAUDE.md`).
+
+```markdown
+---
+paths:
+  - "**/*.tsx"
+  - "**/*.jsx"
+---
+
+# React
+
+- Function components only.
+- Don't use `useEffect` for data fetching — fetch on the server, or use SWR / React Query.
+- ...
+```
+
+**Rules in this snapshot** (in [`./rules/`](./rules/), copied into `~/.claude/rules/` by §3):
+
+| Rule | Triggers on | Covers |
+| --- | --- | --- |
+| `typescript.md` | `**/*.{ts,tsx}` | No `any`, prefer `type`, `satisfies`, generic constraints, boundary validation, error envelopes |
+| `react.md` | `**/*.{tsx,jsx}` | Function components, no `useEffect` for fetching, React 19 actions, measured `useMemo`, stable keys |
+| `nextjs.md` | `app/**`, `pages/**`, `next.config.*`, `middleware.ts` | Server Components by default, Server Actions, dynamic markers, `next/*` primitives, cache hygiene |
+| `tailwind.md` | `**/*.{tsx,jsx}`, tailwind/global CSS | Mobile-first, logical properties, `clsx`/`cva`, no `@apply` outside CSS, semantic HTML |
+| `node-lambda.md` | `handlers/**`, `lambda/**`, `*.handler.{ts,js}`, etc. | Node LTS, AWS SDK v3, connection reuse, lazy init, cold-start hygiene |
+| `aws-cdk.md` | `cdk.json`, `bin/*.ts`, `lib/*-stack.ts`, `cdk/**`, `infra/**` | CDK v2, no hardcoded names, `NodejsFunction` bundling, tag stateful resources, `cdk-nag` |
+
+**Project-level rules** (`<repo>/.claude/rules/`) override / supplement these for a given codebase — useful when one project uses pnpm-only, another team has a specific commit convention, etc. Personal user-level rules load *before* project rules, so project rules take priority.
+
+See the [memory docs](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/) for the full spec (path-globbing, symlinks for shared sets, user-level vs project-level precedence).
 
 ### Subagents
 

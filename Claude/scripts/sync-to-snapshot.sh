@@ -33,7 +33,7 @@ REL="${FILE_PATH#$CLAUDE_DIR/}"
 # projects/, plugins/, history.jsonl, etc.) is ignored.
 case "$REL" in
   CLAUDE.md|settings.json|settings.local.json|statusline.sh) ;;
-  scripts/*|agents/*|skills/*) ;;
+  scripts/*|agents/*|skills/*|rules/*) ;;
   *) exit 0 ;;
 esac
 
