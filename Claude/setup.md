@@ -71,6 +71,7 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 - [`./settings.local.json`](./settings.local.json) → `~/.claude/settings.local.json` — machine-local permission allowlist
 - [`./statusline.sh`](./statusline.sh) → `~/.claude/statusline.sh` — custom status line (wired up in `settings.json`)
 - [`./scripts/guard-bash.sh`](./scripts/guard-bash.sh) → `~/.claude/scripts/guard-bash.sh` — destructive-Bash-command blocker (wired up under `hooks.PreToolUse` in `settings.json`)
+- [`./scripts/log-instructions-loaded.sh`](./scripts/log-instructions-loaded.sh) → `~/.claude/scripts/log-instructions-loaded.sh` — appends each `InstructionsLoaded` event as JSONL to `~/.claude/logs/instructions-loaded.jsonl`. Useful for debugging which path-scoped rules fired on which file reads.
 - [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents (frontend, backend, devops, PM, UX, QA, security). See §4 → **Subagents**.
 - [`./skills/`](./skills/) → `~/.claude/skills/` — hand-written skills loaded on demand. See §4 → **Plugins & Skills**.
 - [`./rules/`](./rules/) → `~/.claude/rules/` — path-scoped rules that auto-load when matching files are open. See §4 → **Rules**.
@@ -187,6 +188,7 @@ Events include:
 - `PreToolUse` / `PostToolUse` — before/after a tool call
 - `UserPromptSubmit` — when you submit a prompt
 - `SessionStart` / `Stop` — session lifecycle
+- `InstructionsLoaded` — every time a `CLAUDE.md` / `CLAUDE.local.md` / `~/.claude/rules/*.md` / project-level rule loads. Receives a JSON event over stdin describing which file loaded and why; great for debugging path-scoped rules. This snapshot wires it to `scripts/log-instructions-loaded.sh` which appends one JSON line per event to `~/.claude/logs/instructions-loaded.jsonl` (read with `tail -f` or `jq`).
 
 Configured in `settings.json`:
 
