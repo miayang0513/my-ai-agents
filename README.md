@@ -1,86 +1,85 @@
 # my-ai-agents
 
-A snapshot of my personal [Claude Code](https://docs.claude.com/en/docs/claude-code) configuration — settings, custom subagents, hand-written skills, hooks, and a from-zero setup guide. Drop the `Claude/` directory onto a fresh machine and you've got my full setup.
+Claude-first personal AI-agent setup snapshot, with a Cursor alternative distribution for near-parity workflows.
 
-## Quick start
+## Start Here
 
-See [`Claude/setup.md`](./Claude/setup.md) for the full walkthrough — install, auth, copying the snapshot into `~/.claude/`, MCP servers, plugins, hooks, and subagents.
+- Primary (Claude): [`Claude/setup.md`](./Claude/setup.md)
+- Alternative (Cursor): [`Cursor/setup.md`](./Cursor/setup.md)
+- Claude reference: [`Claude/README.md`](./Claude/README.md)
+- Cursor reference: [`Cursor/README.md`](./Cursor/README.md)
+- Parity plan: [`NON_CLAUDE_PARITY_PLAN.md`](./NON_CLAUDE_PARITY_PLAN.md)
+- Contributor/agent guardrails: [`AGENTS.md`](./AGENTS.md)
 
-```bash
-git clone https://github.com/miayang0513/my-ai-agents.git ~/Repos/my-ai-agents
-cd ~/Repos/my-ai-agents/Claude
-# then follow setup.md §3 to copy files into ~/.claude/
-```
+Setup and verification commands are intentionally centralized in edition-specific `setup.md` files.
 
 ## What's in `Claude/`
 
 | Path | Purpose |
 | --- | --- |
-| [`CLAUDE.md`](./Claude/CLAUDE.md) | Global preferences (think before coding, simplicity first, surgical changes, goal-driven execution) |
-| [`settings.json`](./Claude/settings.json) | Main config — theme, status line, enabled plugins, known marketplaces, PreToolUse Bash guard |
-| [`settings.local.json`](./Claude/settings.local.json) | Machine-local permission allowlist |
-| [`statusline.sh`](./Claude/statusline.sh) | Custom status line wired up in `settings.json` |
-| [`scripts/`](./Claude/scripts) | `guard-bash.sh` (destructive-command blocker), `sync-to-snapshot.sh` + `auto-commit-snapshot.sh` (auto-mirror `~/.claude/` back into this repo) |
-| [`agents/`](./Claude/agents) | Custom role-based subagents — see below |
-| [`skills/`](./Claude/skills) | Hand-written skills — see below |
-| [`rules/`](./Claude/rules) | Path-scoped rules that auto-load when matching files are open — see below |
-| [`setup.md`](./Claude/setup.md) | The full setup guide |
+| [`Claude/CLAUDE.md`](./Claude/CLAUDE.md) | Global preferences and behavior policy |
+| [`Claude/settings.json`](./Claude/settings.json) | Main config (hooks, plugins, status line) |
+| [`Claude/settings.local.json`](./Claude/settings.local.json) | Machine-local permissions |
+| [`Claude/statusline.sh`](./Claude/statusline.sh) | Custom status line renderer |
+| [`Claude/scripts/`](./Claude/scripts/) | Guard/sync/auto-commit/instruction logging scripts |
+| [`Claude/agents/`](./Claude/agents/) | Role-based subagents |
+| [`Claude/skills/`](./Claude/skills/) | Hand-written skills |
+| [`Claude/rules/`](./Claude/rules/) | Path-scoped auto-loaded rules |
+| [`Claude/setup.md`](./Claude/setup.md) | Complete setup guide |
 
-## Subagents
+## Claude Subagents
 
 | Agent | Model | Read/Write | Use for |
 | --- | --- | --- | --- |
-| [`frontend-engineer`](./Claude/agents/frontend-engineer.md) | sonnet | RW | UI, styling, client-side state, perf, a11y, Figma |
-| [`backend-engineer`](./Claude/agents/backend-engineer.md) | sonnet | RW | APIs, services, schemas, queries, migrations, auth, jobs |
+| [`frontend-engineer`](./Claude/agents/frontend-engineer.md) | sonnet | RW | UI, styling, client-side state, performance, accessibility, Figma implementation |
+| [`backend-engineer`](./Claude/agents/backend-engineer.md) | sonnet | RW | APIs, services, schemas, queries, migrations, auth/session, jobs |
 | [`devops-engineer`](./Claude/agents/devops-engineer.md) | sonnet | RW | CI/CD, Docker, IaC, deployment configs, build tooling |
-| [`product-manager`](./Claude/agents/product-manager.md) | sonnet | RW (no Bash) | PRDs, specs, user stories, status updates |
-| [`uiux-designer`](./Claude/agents/uiux-designer.md) | sonnet | RW (no Bash) | Design review, design-system audits, Figma-to-spec |
-| [`qa-engineer`](./Claude/agents/qa-engineer.md) | sonnet | RW | Test plans, bug repros, e2e tests, coverage analysis |
-| [`code-reviewer`](./Claude/agents/code-reviewer.md) | sonnet | **read-only** | Cold-context code review producing severity-tagged findings |
-| [`security-reviewer`](./Claude/agents/security-reviewer.md) | **opus** | **read-only** | Security review, threat modeling, secret/dep scanning |
+| [`product-manager`](./Claude/agents/product-manager.md) | sonnet | RW (no Bash) | PRDs, specs, user stories, release/status updates |
+| [`uiux-designer`](./Claude/agents/uiux-designer.md) | sonnet | RW (no Bash) | Design review, design-system audits, Figma-to-spec translation |
+| [`qa-engineer`](./Claude/agents/qa-engineer.md) | sonnet | RW | Test plans, bug repro, flaky-test triage, regression suites |
+| [`code-reviewer`](./Claude/agents/code-reviewer.md) | sonnet | **read-only** | Cold-context review with severity-tagged findings |
+| [`security-reviewer`](./Claude/agents/security-reviewer.md) | **opus** | **read-only** | Threat modeling, secret/dependency scanning, auth/input-validation review |
 
-## Skills
+## Claude Skills
 
 | Skill | What it does |
 | --- | --- |
-| [`commit`](./Claude/skills/commit) | Inspect git changes, draft a Conventional Commit message, create the commit on request |
-| [`code-review`](./Claude/skills/code-review) | Review pending uncommitted work; supports findings-only mode |
-| [`code-review-branch`](./Claude/skills/code-review-branch) | Pre-PR full-branch audit vs base; supports findings-only mode |
-| [`skill-judge`](./Claude/skills/skill-judge) | Score a skill against an 8-dimension rubric (120 points) |
-| [`react`](./Claude/skills/react) | Client-side React perf rules + decision flow + spot-and-fix recipes |
-| [`nextjs`](./Claude/skills/nextjs) | Next.js App Router perf (server components, caching, RSC, hydration) |
+| [`commit`](./Claude/skills/commit) | Inspects git state, drafts Conventional Commit messages, performs commit workflow on request |
+| [`code-review`](./Claude/skills/code-review) | Reviews staged + unstaged work only, with findings/fix workflow |
+| [`code-review-branch`](./Claude/skills/code-review-branch) | Reviews full branch vs base before PR/merge |
+| [`skill-judge`](./Claude/skills/skill-judge) | Evaluates skill quality with rubric-based scoring |
+| [`react`](./Claude/skills/react) | React client performance guidance (rerenders, bundle, waterfalls, hot paths) |
+| [`nextjs`](./Claude/skills/nextjs) | Next.js App Router guidance (RSC boundaries, server caching, hydration, route strategy) |
 
-## Rules
+## Claude Rules
 
-Path-scoped instructions that auto-load when Claude opens matching files (no need to invoke them — they apply to the main agent and subagents alike). Topic-per-file, tightly globbed.
+Rules in [`Claude/rules/`](./Claude/rules/) auto-load by path pattern and apply to both the main agent and subagents.
 
 | Rule | Triggers on | Covers |
 | --- | --- | --- |
-| [`typescript`](./Claude/rules/typescript.md) | `**/*.{ts,tsx}` | No `any`, prefer `type`, `satisfies`, generic constraints, boundary validation, error envelopes |
-| [`react`](./Claude/rules/react.md) | `**/*.{tsx,jsx}` | Function components, no `useEffect` for fetching, React 19 actions, measured `useMemo`, stable keys |
-| [`nextjs`](./Claude/rules/nextjs.md) | `app/**`, `pages/**`, `next.config.*`, `middleware.ts` | Server Components by default, Server Actions, dynamic markers, `next/*` primitives, cache hygiene |
-| [`tailwind`](./Claude/rules/tailwind.md) | `**/*.{tsx,jsx}`, tailwind/global CSS | Mobile-first, logical properties, `clsx`/`cva`, no `@apply` outside CSS, semantic HTML |
-| [`node-lambda`](./Claude/rules/node-lambda.md) | `handlers/**`, `lambda/**`, `*.handler.{ts,js}`, etc. | Node LTS, AWS SDK v3, connection reuse, lazy init, cold-start hygiene |
-| [`aws-cdk`](./Claude/rules/aws-cdk.md) | `cdk.json`, `bin/*.ts`, `lib/*-stack.ts`, `cdk/**`, `infra/**` | CDK v2, no hardcoded names, `NodejsFunction` bundling, tag stateful resources, `cdk-nag` |
+| [`typescript`](./Claude/rules/typescript.md) | `**/*.{ts,tsx}` | strict typing, `satisfies`, boundary validation, predictable error envelopes |
+| [`react`](./Claude/rules/react.md) | `**/*.{tsx,jsx}` | component patterns, measured memoization, effect hygiene, key stability |
+| [`nextjs`](./Claude/rules/nextjs.md) | `app/**`, `pages/**`, `next.config.*`, `middleware.ts` | server-first defaults, dynamic markers, cache/revalidation hygiene |
+| [`tailwind`](./Claude/rules/tailwind.md) | `**/*.{tsx,jsx}`, tailwind/global CSS | utility-first structure, semantic HTML, responsive layout conventions |
+| [`node-lambda`](./Claude/rules/node-lambda.md) | `handlers/**`, `lambda/**`, `*.handler.{ts,js}`, etc. | Node LTS runtime patterns, AWS SDK v3, lazy init/cold-start hygiene |
+| [`aws-cdk`](./Claude/rules/aws-cdk.md) | `cdk.json`, `bin/*.ts`, `lib/*-stack.ts`, `cdk/**`, `infra/**` | CDK v2 conventions, bundling patterns, resource tagging, safety checks |
 
-## Hooks
+## Claude Hooks
 
-Wired up under `hooks` in [`settings.json`](./Claude/settings.json). Hooks run automatically around tool calls and session lifecycle events — they enforce behaviors Claude itself can't guarantee between turns.
+Configured under `hooks` in [`Claude/settings.json`](./Claude/settings.json). Hooks run automatically around tool usage and session lifecycle events.
 
 | Event | Matcher | Script | What it does |
 | --- | --- | --- | --- |
-| `PreToolUse` | `Bash` | [`guard-bash.sh`](./Claude/scripts/guard-bash.sh) | Blocks destructive commands (`rm -rf`, `git push --force`, `git reset --hard`, `npm publish`, …) **before** they execute, regardless of which agent invoked them. Edit the `PATTERNS` array to tune the denylist. |
-| `PostToolUse` | `Edit\|Write` | [`sync-to-snapshot.sh`](./Claude/scripts/sync-to-snapshot.sh) | After every file edit, mirrors whitelisted paths under `~/.claude/` (CLAUDE.md, settings\*.json, statusline.sh, scripts/, agents/, skills/) into `Claude/` in this repo so the snapshot stays in sync. Has a secret-guard regex to skip files that look like they contain credentials. |
-| `Stop` (async) | — | [`auto-commit-snapshot.sh`](./Claude/scripts/auto-commit-snapshot.sh) | At session end, if `Claude/` has unstaged changes, drafts a Conventional Commit message via `claude --print --no-session-persistence --model haiku`, validates the format, and creates the commit. If the generated message fails validation it un-stages and leaves the work for the user; if `git commit` itself fails it logs and exits without rollback. Recursion-guarded with `CLAUDE_AUTOCOMMIT_RUNNING`. |
-| `InstructionsLoaded` | — | [`log-instructions-loaded.sh`](./Claude/scripts/log-instructions-loaded.sh) | Appends each instruction-load event (CLAUDE.md / `~/.claude/rules/*.md` / `CLAUDE.local.md` / project-level rules) as one JSON line to `~/.claude/logs/instructions-loaded.jsonl` so you can see exactly what fired and what didn't. Helpful when debugging path-scoped rules. Read with `tail -f` or `jq`. |
+| `PreToolUse` | `Bash` | [`guard-bash.sh`](./Claude/scripts/guard-bash.sh) | Blocks destructive commands (`rm -rf`, `git push --force`, `git reset --hard`, `npm publish`, etc.) before execution. |
+| `PostToolUse` | `Edit\|Write` | [`sync-to-snapshot.sh`](./Claude/scripts/sync-to-snapshot.sh) | After edits, mirrors whitelisted `~/.claude/` paths into `Claude/` in this repo, with a secret-pattern guard to avoid syncing risky content. |
+| `Stop` (async) | — | [`auto-commit-snapshot.sh`](./Claude/scripts/auto-commit-snapshot.sh) | At session end, if snapshot files changed, drafts/validates a Conventional Commit message and attempts to commit automatically. |
+| `InstructionsLoaded` | — | [`log-instructions-loaded.sh`](./Claude/scripts/log-instructions-loaded.sh) | Appends instruction-load events to `~/.claude/logs/instructions-loaded.jsonl` for rule/instruction debugging. |
 
-Together, the `PostToolUse` + `Stop` pair makes the snapshot self-maintaining: edit `~/.claude/` files in any session and they auto-mirror + auto-commit into this repo without manual `cp` / `git` work.
+The `PostToolUse` + `Stop` pairing keeps the snapshot self-maintaining over time.
 
-See [`setup.md` §4 → Hooks](./Claude/setup.md#hooks) for the broader hook system (events, configuration syntax, troubleshooting).
+## Claude Plugins
 
-## Plugins
-
-Installed via `/plugin` from the marketplaces declared in [`settings.json`](./Claude/settings.json) → `extraKnownMarketplaces`. See [`setup.md` §4 → Plugins & Skills](./Claude/setup.md#plugins--skills) for the install walkthrough.
+Defined in [`Claude/settings.json`](./Claude/settings.json):
 
 | Plugin | Marketplace | What it gives you |
 | --- | --- | --- |
@@ -88,7 +87,22 @@ Installed via `/plugin` from the marketplaces declared in [`settings.json`](./Cl
 | `document-skills` | `anthropic-agent-skills` | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
 | `context7` | `claude-plugins-official` | Up-to-date library docs MCP (Upstash, Community Managed) |
 | `codex` | `openai-codex` | OpenAI Codex CLI integration: `/codex:setup`, `/codex:rescue`, plus internal helpers |
-| `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server integration — automatic type-error / import-resolution diagnostics after every edit, plus symbol-aware navigation. Requires `typescript-language-server` on PATH (`npm install -g typescript-language-server typescript`) |
+| `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server diagnostics and symbol-aware navigation (requires `typescript-language-server` on `PATH`) |
+
+## Cursor Alternative
+
+For users who prefer Cursor, this repo includes a parallel distribution in [`Cursor/`](./Cursor/):
+
+- rules, agents, skills, and scripts adapted for Cursor runtime conventions
+- bootstrap flow for wiring a target project quickly
+- setup details in [`Cursor/setup.md`](./Cursor/setup.md)
+
+## Setup-Only Details
+
+All operational steps are intentionally centralized in setup docs:
+
+- Claude install/auth/bootstrap/MCP/plugins/checklist: [`Claude/setup.md`](./Claude/setup.md)
+- Cursor bootstrap/MCP/checklist: [`Cursor/setup.md`](./Cursor/setup.md)
 
 ## License
 

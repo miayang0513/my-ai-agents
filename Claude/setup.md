@@ -2,6 +2,9 @@
 
 A complete guide to setting up Claude Code, from installation to advanced configuration.
 
+For a faster overview (what's included, hooks, MCP, plugins), see [`README.md`](./README.md).
+All setup procedures and verification steps are intentionally centralized in this file.
+
 ---
 
 ## 1. Install
@@ -72,9 +75,9 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 - [`./statusline.sh`](./statusline.sh) → `~/.claude/statusline.sh` — custom status line (wired up in `settings.json`)
 - [`./scripts/guard-bash.sh`](./scripts/guard-bash.sh) → `~/.claude/scripts/guard-bash.sh` — destructive-Bash-command blocker (wired up under `hooks.PreToolUse` in `settings.json`)
 - [`./scripts/log-instructions-loaded.sh`](./scripts/log-instructions-loaded.sh) → `~/.claude/scripts/log-instructions-loaded.sh` — appends each `InstructionsLoaded` event as JSONL to `~/.claude/logs/instructions-loaded.jsonl`. Useful for debugging which path-scoped rules fired on which file reads.
-- [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents (frontend, backend, devops, PM, UX, QA, security). See §4 → **Subagents**.
-- [`./skills/`](./skills/) → `~/.claude/skills/` — hand-written skills loaded on demand. See §4 → **Plugins & Skills**.
-- [`./rules/`](./rules/) → `~/.claude/rules/` — path-scoped rules that auto-load when matching files are open. See §4 → **Rules**.
+- [`./agents/`](./agents/) → `~/.claude/agents/` — role-based subagents
+- [`./skills/`](./skills/) → `~/.claude/skills/` — hand-written skills loaded on demand
+- [`./rules/`](./rules/) → `~/.claude/rules/` — path-scoped rules
 
 Run from inside the `Claude/` directory of this repo:
 
@@ -181,14 +184,7 @@ After adding, re-run `claude mcp list` to confirm both show `✓ Connected`. If 
 
 ### Hooks
 
-Hooks are shell commands the harness runs in response to events. They are how you wire **automated behaviors** ("every time X happens, do Y") — Claude itself can't enforce these between turns.
-
-Events include:
-
-- `PreToolUse` / `PostToolUse` — before/after a tool call
-- `UserPromptSubmit` — when you submit a prompt
-- `SessionStart` / `Stop` — session lifecycle
-- `InstructionsLoaded` — every time a `CLAUDE.md` / `CLAUDE.local.md` / `~/.claude/rules/*.md` / project-level rule loads. Receives a JSON event over stdin describing which file loaded and why; great for debugging path-scoped rules. This snapshot wires it to `scripts/log-instructions-loaded.sh` which appends one JSON line per event to `~/.claude/logs/instructions-loaded.jsonl` (read with `tail -f` or `jq`).
+Use hooks to automate guardrails and sync behavior. This repo already wires hooks in `settings.json`.
 
 Configured in `settings.json`:
 
@@ -205,11 +201,11 @@ Configured in `settings.json`:
 }
 ```
 
-Use the `/update-config` skill to add or troubleshoot hooks.
+Use `/update-config` to add/troubleshoot hooks. For hook overview, see [`README.md`](./README.md#hooks-at-a-glance).
 
 ### Plugins & Skills
 
-Slash commands invoke **skills** — self-contained instructions Claude loads on demand. Skills come from three sources: built into Claude Code, installed via plugins from a marketplace, or hand-written locally.
+Use `/plugin` to install/update plugins and `/reload-plugins` to apply changes in-session.
 
 #### Marketplaces
 
@@ -231,13 +227,12 @@ Plugin marketplaces are git-backed sources of plugins. Three configured on this 
 
 #### Plugins installed
 
-| Plugin | Marketplace | What it gives you |
-| --- | --- | --- |
-| `skill-creator` | claude-plugins-official | Build / iterate on custom skills |
-| `document-skills` | anthropic-agent-skills | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
-| `context7` | claude-plugins-official | Up-to-date library docs MCP (Upstash, Community Managed) |
-| `codex` | openai-codex | OpenAI Codex CLI integration: `/codex:setup`, `/codex:rescue`, plus internal helpers |
-| `typescript-lsp` | claude-plugins-official | Wires Claude into the TypeScript Language Server. After every Edit/Write, the LSP reports type errors / missing imports / syntax issues back in the same turn — Claude fixes them before the turn ends. Also enables symbol-aware navigation (jump-to-def, find-references, type-on-hover, call hierarchy). Requires the `typescript-language-server` binary on `PATH` — `npm install -g typescript-language-server typescript`. Press **Ctrl+O** when the "diagnostics found" indicator appears to view inline. |
+Installed plugin catalog lives in [`README.md` -> Plugins used](./README.md#plugins-used).
+
+Setup reminder:
+
+- after copying `settings.json`, run `/plugin` to install enabled plugins
+- run `/reload-plugins` after install/update in the current session
 
 #### Codex plugin — install + nvm gotcha
 
@@ -278,79 +273,6 @@ Hand-written skills live next to your config:
 - Project: `<repo>/.claude/skills/<name>/SKILL.md`
 
 Each skill is a folder with a `SKILL.md` describing what it does and when to trigger. Create one with `/skill-creator`.
-
-### Rules
-
-Rules are path-scoped instructions that **auto-load** when Claude opens a matching file. Unlike skills (which load on demand) or CLAUDE.md (which loads every session), rules combine the best of both: always present *when relevant*, absent otherwise. They apply to the main agent and all subagents, no invocation required.
-
-**Layout** — one topic per file under `~/.claude/rules/`. The `paths:` frontmatter is a list of globs; if omitted, the rule loads unconditionally (same priority as `~/.claude/CLAUDE.md`).
-
-```markdown
----
-paths:
-  - "**/*.tsx"
-  - "**/*.jsx"
----
-
-# React
-
-- Function components only.
-- Don't use `useEffect` for data fetching — fetch on the server, or use SWR / React Query.
-- ...
-```
-
-**Rules in this snapshot** (in [`./rules/`](./rules/), copied into `~/.claude/rules/` by §3):
-
-| Rule | Triggers on | Covers |
-| --- | --- | --- |
-| `typescript.md` | `**/*.{ts,tsx}` | No `any`, prefer `type`, `satisfies`, generic constraints, boundary validation, error envelopes |
-| `react.md` | `**/*.{tsx,jsx}` | Function components, no `useEffect` for fetching, React 19 actions, measured `useMemo`, stable keys |
-| `nextjs.md` | `app/**`, `pages/**`, `next.config.*`, `middleware.ts` | Server Components by default, Server Actions, dynamic markers, `next/*` primitives, cache hygiene |
-| `tailwind.md` | `**/*.{tsx,jsx}`, tailwind/global CSS | Mobile-first, logical properties, `clsx`/`cva`, no `@apply` outside CSS, semantic HTML |
-| `node-lambda.md` | `handlers/**`, `lambda/**`, `*.handler.{ts,js}`, etc. | Node LTS, AWS SDK v3, connection reuse, lazy init, cold-start hygiene |
-| `aws-cdk.md` | `cdk.json`, `bin/*.ts`, `lib/*-stack.ts`, `cdk/**`, `infra/**` | CDK v2, no hardcoded names, `NodejsFunction` bundling, tag stateful resources, `cdk-nag` |
-
-**Project-level rules** (`<repo>/.claude/rules/`) override / supplement these for a given codebase — useful when one project uses pnpm-only, another team has a specific commit convention, etc. Personal user-level rules load *before* project rules, so project rules take priority.
-
-See the [memory docs](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/) for the full spec (path-globbing, symlinks for shared sets, user-level vs project-level precedence).
-
-### Subagents
-
-Subagents are isolated Claude instances the main session can delegate to. Each runs in its own context window with its own system prompt, tools, and model — only the final summary returns to the main conversation.
-
-**Built-in types:**
-
-- `Explore` — fast read-only code search
-- `Plan` — architecture / implementation planning
-- `general-purpose` — multi-step research and tasks
-
-**Custom role-based subagents** shipped in this repo, dropped into `~/.claude/agents/` by §3:
-
-| Agent | Model | Read/Write | When to use |
-| --- | --- | --- | --- |
-| `frontend-engineer` | sonnet | RW | UI components, styling, client-side state, perf, a11y, frontend tests, anything Figma |
-| `backend-engineer` | sonnet | RW | APIs, services, schemas, queries, migrations, auth, jobs, AI-integration backends |
-| `devops-engineer` | sonnet | RW | CI/CD, Dockerfiles, IaC (Terraform/k8s/Helm), deployment configs, monitoring-as-code, build tooling |
-| `product-manager` | sonnet | RW (no Bash) | PRDs, specs, user stories, status updates, release notes, roadmap docs |
-| `uiux-designer` | sonnet | RW (no Bash) | Design review, design-system audits, a11y design checks, Figma-to-spec |
-| `qa-engineer` | sonnet | RW | Test plans, bug repros, e2e tests, flaky-test triage, coverage analysis |
-| `security-reviewer` | **opus** | **read-only** | PR security review, threat modeling, secret/dep scanning, auth/crypto review |
-
-All six follow the same template: action-oriented `description`, least-privilege `tools`, `memory: project` (knowledge accumulates per project under `.claude/agent-memory/<name>/`), curated preloaded skills, a numbered "When invoked" workflow, an explicit hand-back protocol for out-of-scope work, and a fixed Output contract (Summary / Files touched / Verification / Blockers). Hard rules trust the global guard-bash hook for destructive-command protection.
-
-**Invoke** by name in chat (`Use the qa-engineer subagent to write a failing test for this bug`) or `@`-mention (`@frontend-engineer look at the auth changes`).
-
-**Define your own** at `~/.claude/agents/<name>.md` (global) or `<repo>/.claude/agents/<name>.md` (project). Frontmatter fields: `name`, `description`, `tools`, `model`, `memory`, `color`, `skills`, etc. — see [docs](https://code.claude.com/docs/en/sub-agents).
-
-### IDE integration
-
-- **VS Code / Cursor** — install the "Claude Code" extension; opens an inline panel.
-- **JetBrains** — install the plugin from the marketplace.
-- **Web** — claude.ai/code for a browser session against your repos.
-
-### Keybindings
-
-Customize submit key, chord shortcuts, etc. via `~/.claude/keybindings.json`. Use the `/keybindings-help` skill for templates.
 
 ---
 
