@@ -7,6 +7,17 @@
 
 set -uo pipefail
 
+# Detach guard — the harness drains Stop hooks (even async ones) before letting
+# `claude` exit. Generating the commit message spawns a nested `claude --print`
+# whose API round-trip can take 5-40s, which stalls exit. Re-exec ourselves as a
+# fully detached background process so the Stop hook returns instantly; the
+# commit then completes out-of-band. CLAUDE_AUTOCOMMIT_RUNNING is intentionally
+# not set here so the detached run proceeds past the recursion guard below.
+if [ -z "${CLAUDE_AUTOCOMMIT_DETACHED:-}" ]; then
+  CLAUDE_AUTOCOMMIT_DETACHED=1 nohup "$0" >/dev/null 2>&1 &
+  exit 0
+fi
+
 # Recursion guard — this script calls `claude --print` to generate a commit
 # message; that child claude session also fires its Stop hook, which would
 # re-enter this script. Set an env-var sentinel so the recursive invocation
