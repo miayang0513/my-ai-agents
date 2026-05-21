@@ -90,7 +90,7 @@ $DIFFBODY
 EOF
 )
 
-MSG=$(printf '%s' "$PROMPT" | claude --print --no-session-persistence --model haiku 2>>"$LOG" \
+MSG=$(printf '%s' "$PROMPT" | claude --print --no-session-persistence --strict-mcp-config --model haiku 2>>"$LOG" \
   | head -1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr -d '`"')
 
 # Validate: must be a conventional-commits line, not a generic "auto-sync"
