@@ -13,7 +13,7 @@ All setup procedures and verification steps are intentionally centralized in thi
 
 - macOS with a terminal (zsh, bash, fish all fine)
 - **`jq`** — required by `statusline.sh` and `scripts/guard-bash.sh`
-- **`node`** — required by the Codex plugin hooks and `npx`-based MCPs (Playwright, Firecrawl). Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If hooks/MCPs fail with `node: command not found`, see §4 → **Codex plugin — install + nvm gotcha** for the fix.
+- **`node`** — required by the Codex plugin hooks and the local MCP servers (Playwright, Firecrawl, run via globally-installed CLIs — see §3). Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If hooks/MCPs fail with `node: command not found`, see §4 → **Codex plugin & MCPs — node-on-PATH gotcha** for the fix.
 
 ```bash
 brew install jq
@@ -111,12 +111,17 @@ Four things live outside `~/.claude/` and must be redone on every new machine:
 - [ ] Google Drive
 - [ ] Figma
 
-**2. Local MCP servers** — Playwright and Firecrawl. These are stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so they don't come along with the snapshot. Re-add them:
+**2. Local MCP servers** — Playwright and Firecrawl. Stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so they don't come along with the snapshot. Install the CLIs globally and point Claude at them directly — **not** `npx -y`, which re-resolves the package from the npm registry on *every* launch and adds ~15s to `claude` startup:
 
 ```bash
-claude mcp add playwright -- npx -y @playwright/mcp
-claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- npx -y firecrawl-mcp
+npm i -g @playwright/mcp firecrawl-mcp        # install once, under your active node
+
+NODE="$(command -v node)"
+claude mcp add playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
+claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- "$NODE" "$(npm root -g)/firecrawl-mcp/dist/index.js"
 ```
+
+> These resolve to absolute paths under your *current* node. With nvm the paths are version-specific — after `nvm install` / switching the default, re-run `npm i -g …` and re-add (or hand-edit the paths in `~/.claude.json`).
 
 **3. `FIRECRAWL_API_KEY`** — secret, intentionally not in this repo. Pull from your password manager, or generate a new one at [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys) (see §4 → MCP servers for the walkthrough).
 
@@ -163,14 +168,17 @@ claude mcp remove <name>                    # remove
 
 Servers can also be declared in `settings.json` under `mcpServers`. Once added, their tools appear in-session as `mcp__<server>__<tool>`.
 
-**Required on a new device** — the local MCPs below are stored in `~/.claude.json`, not `~/.claude/settings.json`, so the §3 snapshot copy does NOT bring them over. Re-add them per-device:
+**Required on a new device** — the local MCPs below are stored in `~/.claude.json`, not `~/.claude/settings.json`, so the §3 snapshot copy does NOT bring them over. Install + add per-device (see §3 → step 2 for why we avoid `npx -y`):
 
 ```bash
+npm i -g @playwright/mcp firecrawl-mcp
+NODE="$(command -v node)"
+
 # Browser automation — drives a real Chromium for navigating, clicking, scraping
-claude mcp add playwright -- npx -y @playwright/mcp
+claude mcp add playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
 
 # Web scraping / crawling — needs FIRECRAWL_API_KEY (see below)
-claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- npx -y firecrawl-mcp
+claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- "$NODE" "$(npm root -g)/firecrawl-mcp/dist/index.js"
 ```
 
 **Getting `FIRECRAWL_API_KEY`** (assuming you already have a Firecrawl account):
@@ -234,7 +242,7 @@ Setup reminder:
 - after copying `settings.json`, run `/plugin` to install enabled plugins
 - run `/reload-plugins` after install/update in the current session
 
-#### Codex plugin — install + nvm gotcha
+#### Codex plugin & MCPs — node-on-PATH gotcha
 
 The Codex plugin needs a working `node` on `PATH` because its three lifecycle hooks (`SessionStart`, `SessionEnd`, `Stop`) shell out to `node /path/to/script.mjs`. If `node` isn't found you'll see:
 
@@ -251,15 +259,25 @@ The Codex plugin needs a working `node` on `PATH` because its three lifecycle ho
 /reload-plugins                                  # apply
 ```
 
-**Make node reachable** — most relevant on macOS where Node is commonly nvm-managed with a *lazy-load* shim (`_load_nvm`). That shim only fires inside an interactive zsh, so when Claude Code is launched from a wrapper like cmux/Ghostty plugins/an IDE that doesn't source `.zshrc`, neither `node` nor `npx` are on `PATH` for spawned subprocesses (this also breaks `npx`-based MCPs like Playwright and Firecrawl, not just Codex).
+**Make node reachable** — most relevant on macOS where Node is nvm-managed with a *lazy-load* shim (`_load_nvm`). That shim only fires inside an interactive zsh, so when Claude Code is launched from a wrapper like cmux/Ghostty plugins/an IDE that doesn't source `.zshrc`, `node` isn't on `PATH` for spawned subprocesses and the Codex hooks fail.
 
-The robust fix is to install a system Node so it lives on the inherited `PATH`:
+Two fixes — pick one:
 
-```bash
-brew install node      # puts node + npx in /opt/homebrew/bin/, always on PATH
-```
+- **Symlink nvm's node onto the system PATH** (no second toolchain; what this machine uses):
 
-After that, `claude mcp list` should show Playwright and Firecrawl as `✓ Connected`, and the Codex hooks stop erroring.
+  ```bash
+  ln -sf "$(command -v node)" /opt/homebrew/bin/node
+  ```
+
+  `/opt/homebrew/bin` is on the inherited `PATH` even for GUI-launched apps. Caveat: the symlink points at one *specific* nvm version — repoint it after switching node versions.
+
+- **Install a system Node** (no version coupling, but a second node alongside nvm):
+
+  ```bash
+  brew install node      # node lives in /opt/homebrew/bin/, always on PATH
+  ```
+
+After either, the Codex hooks stop erroring. Interactive shells still use nvm's node — it sits earlier on `PATH`.
 
 #### Built-in skills (no install needed)
 
