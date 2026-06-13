@@ -72,8 +72,9 @@
       }
     }
   },
+  "effortLevel": "xhigh",
   "theme": "dark",
-  "skipAutoPermissionPrompt": true,
   "agentPushNotifEnabled": true,
-  "effortLevel": "xhigh"
+  "skipAutoPermissionPrompt": true,
+  "model": "Fable"
 }
