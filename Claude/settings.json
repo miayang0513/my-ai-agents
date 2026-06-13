@@ -75,6 +75,5 @@
   "effortLevel": "xhigh",
   "theme": "dark",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "model": "Fable"
+  "skipAutoPermissionPrompt": true
 }
