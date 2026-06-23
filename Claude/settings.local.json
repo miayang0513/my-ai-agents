@@ -14,7 +14,9 @@
       "Read(//private/etc/**)",
       "Read(//private/etc/paths.d/**)",
       "Bash(brew uninstall *)",
-      "WebFetch(domain:turo.com)"
+      "WebFetch(domain:turo.com)",
+      "mcp__figma-eatsy__whoami",
+      "Skill(claude-api)"
     ]
   }
 }
