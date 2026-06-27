@@ -2,7 +2,7 @@
 name: code-reviewer
 description: Use proactively when the user asks for a code review — pending work, an entire branch, a PR, a specific file, or a second-opinion audit. Independent cold-context review producing severity-tagged findings WITHOUT modifying code. Trigger on "review my code", "code review", "review this PR", "audit my branch", "review before I merge", "second opinion on this diff", or when an engineer agent's work needs an unbiased pass. Do NOT use for security review (use security-reviewer), implementation/fixes (use frontend / backend / devops-engineer), or visual/UX review (use uiux-designer).
 tools: Read, Bash, Grep, Glob
-model: sonnet
+model: opus
 memory: project
 color: blue
 skills: code-review, code-review-branch

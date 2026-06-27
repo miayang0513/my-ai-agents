@@ -2,7 +2,7 @@
 name: backend-engineer
 description: Use proactively when the user asks to build, modify, or debug server-side code — APIs, services, database schemas, queries, migrations, business logic, server-side performance, auth/session, background jobs, or integrations with external SDKs (including AI APIs like Claude/OpenAI). Do NOT use for client-side UI, design, or infra/deploy work.
 tools: Read, Edit, Write, Bash, Grep, Glob, mcp__context7
-model: sonnet
+model: opus
 memory: project
 color: green
 skills: document-skills:claude-api
