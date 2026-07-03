@@ -72,7 +72,6 @@
       }
     }
   },
-  "effortLevel": "xhigh",
   "theme": "dark",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
