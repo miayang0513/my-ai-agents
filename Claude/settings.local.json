@@ -16,7 +16,9 @@
       "Bash(brew uninstall *)",
       "WebFetch(domain:turo.com)",
       "mcp__figma-eatsy__whoami",
-      "Skill(claude-api)"
+      "Skill(claude-api)",
+      "Bash(kill %1)",
+      "Bash(pkill -f 'claude --print --no-session-persistence --model haiku')"
     ]
   }
 }
