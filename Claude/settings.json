@@ -54,7 +54,7 @@
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true,
-    "context7@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
     "codex@openai-codex": true,
     "typescript-lsp@claude-plugins-official": true
   },
