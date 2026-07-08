@@ -45,6 +45,7 @@ Setup and verification commands are intentionally centralized in edition-specifi
 | Skill | What it does |
 | --- | --- |
 | [`commit`](./Claude/skills/commit) | Inspects git state, drafts Conventional Commit messages, performs commit workflow on request |
+| [`commit-for-review`](./Claude/skills/commit-for-review) | Same as `commit`, but lands the commit on a derived `review/<id>` branch to keep review changes off the branch under review |
 | [`code-review`](./Claude/skills/code-review) | Reviews staged + unstaged work only, with findings/fix workflow |
 | [`code-review-branch`](./Claude/skills/code-review-branch) | Reviews full branch vs base before PR/merge |
 | [`skill-judge`](./Claude/skills/skill-judge) | Evaluates skill quality with rubric-based scoring |
