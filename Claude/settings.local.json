@@ -18,7 +18,9 @@
       "mcp__figma-eatsy__whoami",
       "Skill(claude-api)",
       "Bash(kill %1)",
-      "Bash(pkill -f 'claude --print --no-session-persistence --model haiku')"
+      "Bash(pkill -f 'claude --print --no-session-persistence --model haiku')",
+      "Bash(python3 -m json.tool)",
+      "Bash(command -v node)"
     ]
   }
 }
