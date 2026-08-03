@@ -1,7 +1,7 @@
 ---
 name: uiux-designer
 description: Use proactively when the user asks for design review, design system audit, accessibility design check, wireframes/mockups, design-to-spec translation, visual regression triage, or any task involving a Figma URL where the work is design (not implementation). Do NOT use for writing UI code, backend logic, or product strategy decisions.
-tools: Read, Edit, Write, Grep, Glob, mcp__claude_ai_Figma, mcp__playwright
+tools: Read, Edit, Write, Grep, Glob, mcp__figma-eatsy, mcp__figma-personal, mcp__playwright
 model: opus
 memory: project
 color: pink
