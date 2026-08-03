@@ -21,7 +21,8 @@
       "Bash(pkill -f 'claude --print --no-session-persistence --model haiku')",
       "Bash(python3 -m json.tool)",
       "Bash(command -v node)",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('global mcpServers:', list\\(d.get\\('mcpServers',{}\\).keys\\(\\)\\)\\); [print\\(f'project {p}:', list\\(c.get\\('mcpServers',{}\\).keys\\(\\)\\)\\) for p,c in d.get\\('projects',{}\\).items\\(\\) if c.get\\('mcpServers'\\)]\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('global mcpServers:', list\\(d.get\\('mcpServers',{}\\).keys\\(\\)\\)\\); [print\\(f'project {p}:', list\\(c.get\\('mcpServers',{}\\).keys\\(\\)\\)\\) for p,c in d.get\\('projects',{}\\).items\\(\\) if c.get\\('mcpServers'\\)]\")",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
