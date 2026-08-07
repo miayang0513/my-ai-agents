@@ -294,7 +294,7 @@ After setup, confirm everything works end-to-end:
 4. Ask Claude to run `!git status` → executes shell command
 5. Edit a file via Claude → `git diff` shows expected change
 6. `claude mcp list` → the Claude.ai-managed connectors (Notion, Gmail, Calendar, Drive, Figma, Context7, Atlassian Rovo, Vercel) **and** the local one (Playwright) show `✓ Connected`
-7. `claude agents` → all eight custom subagents listed (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `code-reviewer`, `security-reviewer`)
+7. `ls ~/.claude/agents/` → eight definitions present (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `code-reviewer`, `security-reviewer`), then `/agents` inside a session to confirm they load. Note `claude agents` lists *running agent sessions*, not definitions — it is not the check you want here.
 8. Trigger a destructive Bash command (e.g. ask Claude to run `rm -rf /tmp/nope`) → guard-bash hook blocks it with the "Blocked by …" message
 
 If any step fails, check `~/.claude/logs/` for harness errors.
