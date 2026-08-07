@@ -3,6 +3,7 @@ name: frontend-engineer
 description: Use proactively when the user asks to build, modify, or debug UI in the project's existing frontend stack; when a Figma URL is shared; when styling, accessibility, or client-side performance is involved; or when frontend tests need to be written or verified. Do NOT use for backend services, APIs, schemas, infra, or one-line tweaks the main agent can handle directly.
 tools: Read, Edit, Write, Bash, Grep, Glob, mcp__figma-eatsy, mcp__figma-personal, mcp__playwright, mcp__context7
 model: opus
+background: false
 memory: project
 color: cyan
 skills: document-skills:frontend-design, document-skills:webapp-testing, react, nextjs

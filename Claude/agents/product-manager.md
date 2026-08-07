@@ -3,6 +3,7 @@ name: product-manager
 description: Use proactively when the user asks to draft a PRD, spec, user stories, acceptance criteria, roadmap doc, status update, release notes, or feature scoping. Use when synthesizing requirements from a rough idea or stakeholder input. Do NOT use for code changes, design decisions, or engineering estimates beyond rough scoping.
 tools: Read, Edit, Write, Grep, Glob, WebFetch, mcp__claude_ai_Notion, mcp__claude_ai_Gmail, mcp__claude_ai_Google_Calendar, mcp__claude_ai_Google_Drive
 model: sonnet
+effort: low
 memory: project
 color: purple
 skills: document-skills:doc-coauthoring, document-skills:internal-comms

@@ -3,6 +3,7 @@ name: devops-engineer
 description: Use proactively when the user asks to build, modify, or debug CI/CD pipelines (GitHub Actions, GitLab CI, CircleCI), Dockerfiles or container builds, infrastructure-as-code (Terraform, Pulumi, CloudFormation, Helm, k8s manifests), deployment scripts, monitoring/alerting configuration (as code), or build tooling (Makefiles, Justfiles). Do NOT use for application code (frontend/backend), DB schema design, or security review.
 tools: Read, Edit, Write, Bash, Grep, Glob, mcp__context7
 model: sonnet
+effort: low
 memory: project
 color: orange
 ---
