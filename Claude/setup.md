@@ -13,7 +13,7 @@ All setup procedures and verification steps are intentionally centralized in thi
 
 - macOS with a terminal (zsh, bash, fish all fine)
 - **`jq`** — required by `statusline.sh` and `scripts/guard-bash.sh`
-- **`node`** — required by the local MCP servers (Playwright, Firecrawl, run via globally-installed CLIs — see §3) and by `typescript-lsp`. Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If MCPs fail with `node: command not found`, see §4 → **node-on-PATH gotcha** for the fix.
+- **`node`** — required by the local MCP server (Playwright, run via a globally-installed CLI — see §3) and by `typescript-lsp`. Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If MCPs fail with `node: command not found`, see §4 → **node-on-PATH gotcha** for the fix.
 
 ```bash
 brew install jq
@@ -106,7 +106,7 @@ After copying `settings.json`, the listed marketplaces and `enabledPlugins` are 
 
 ### Per-device steps (NOT covered by the snapshot)
 
-Four things live outside `~/.claude/` and must be redone on every new machine:
+Three things live outside `~/.claude/` and must be redone on every new machine:
 
 **1. Claude.ai-managed MCP connectors** — tied to your account, not local files. After logging in, connect each at [claude.ai/settings/connectors](https://claude.ai/settings/connectors):
 
@@ -116,21 +116,18 @@ Four things live outside `~/.claude/` and must be redone on every new machine:
 - [ ] Google Drive
 - [ ] Figma
 
-**2. Local MCP servers** — Playwright and Firecrawl. Stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so they don't come along with the snapshot. Install the CLIs globally and point Claude at them directly — **not** `npx -y`, which re-resolves the package from the npm registry on *every* launch and adds ~15s to `claude` startup:
+**2. Local MCP server** — Playwright. Stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so it doesn't come along with the snapshot. Install the CLI globally and point Claude at it directly — **not** `npx -y`, which re-resolves the package from the npm registry on *every* launch and adds ~15s to `claude` startup:
 
 ```bash
-npm i -g @playwright/mcp firecrawl-mcp        # install once, under your active node
+npm i -g @playwright/mcp                      # install once, under your active node
 
 NODE="$(command -v node)"
 claude mcp add playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
-claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- "$NODE" "$(npm root -g)/firecrawl-mcp/dist/index.js"
 ```
 
-> These resolve to absolute paths under your *current* node. With nvm the paths are version-specific — after `nvm install` / switching the default, re-run `npm i -g …` and re-add (or hand-edit the paths in `~/.claude.json`).
+> This resolves to an absolute path under your *current* node. With nvm the path is version-specific — after `nvm install` / switching the default, re-run `npm i -g …` and re-add (or hand-edit the path in `~/.claude.json`).
 
-**3. `FIRECRAWL_API_KEY`** — secret, intentionally not in this repo. Pull from your password manager, or generate a new one at [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys) (see §4 → MCP servers for the walkthrough).
-
-**4. Snapshot path override** — only needed if your clone of `my-ai-agents` isn't at `~/Repos/my-ai-agents`. The auto-sync hooks (`scripts/sync-to-snapshot.sh`, `scripts/auto-commit-snapshot.sh`) default to that path. To point them somewhere else, create `~/.claude/.sync-config`:
+**3. Snapshot path override** — only needed if your clone of `my-ai-agents` isn't at `~/Repos/my-ai-agents`. The auto-sync hooks (`scripts/sync-to-snapshot.sh`, `scripts/auto-commit-snapshot.sh`) default to that path. To point them somewhere else, create `~/.claude/.sync-config`:
 
 ```bash
 echo 'SNAPSHOT_REPO="$HOME/code/my-ai-agents"' > ~/.claude/.sync-config
@@ -173,27 +170,17 @@ claude mcp remove <name>                    # remove
 
 Servers can also be declared in `settings.json` under `mcpServers`. Once added, their tools appear in-session as `mcp__<server>__<tool>`.
 
-**Required on a new device** — the local MCPs below are stored in `~/.claude.json`, not `~/.claude/settings.json`, so the §3 snapshot copy does NOT bring them over. Install + add per-device (see §3 → step 2 for why we avoid `npx -y`):
+**Required on a new device** — the local MCP below is stored in `~/.claude.json`, not `~/.claude/settings.json`, so the §3 snapshot copy does NOT bring it over. Install + add per-device (see §3 → step 2 for why we avoid `npx -y`):
 
 ```bash
-npm i -g @playwright/mcp firecrawl-mcp
+npm i -g @playwright/mcp
 NODE="$(command -v node)"
 
 # Browser automation — drives a real Chromium for navigating, clicking, scraping
 claude mcp add playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
-
-# Web scraping / crawling — needs FIRECRAWL_API_KEY (see below)
-claude mcp add firecrawl -e FIRECRAWL_API_KEY=<your-key> -- "$NODE" "$(npm root -g)/firecrawl-mcp/dist/index.js"
 ```
 
-**Getting `FIRECRAWL_API_KEY`** (assuming you already have a Firecrawl account):
-
-1. Sign in at [firecrawl.dev](https://www.firecrawl.dev/).
-2. Go to the dashboard → **API Keys** (left sidebar, or [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys)).
-3. Click **Create API Key**, copy the value (starts with `fc-`).
-4. Pass it via `-e FIRECRAWL_API_KEY=...` when running `claude mcp add` (above), or export it in your shell before launching `claude`.
-
-After adding, re-run `claude mcp list` to confirm both show `✓ Connected`. If `firecrawl` shows `✗ Failed to connect`, double-check the key is set.
+After adding, re-run `claude mcp list` to confirm it shows `✓ Connected`.
 
 ### Hooks
 
@@ -274,7 +261,7 @@ Two fixes — pick one:
   brew install node      # node lives in /opt/homebrew/bin/, always on PATH
   ```
 
-Verify with `claude mcp list` — Playwright and Firecrawl should both report `✓ Connected`.
+Verify with `claude mcp list` — Playwright should report `✓ Connected`.
 
 #### Built-in skills (no install needed)
 
@@ -300,7 +287,7 @@ After setup, confirm everything works end-to-end:
 3. `/status` → shows logged-in account and model
 4. Ask Claude to run `!git status` → executes shell command
 5. Edit a file via Claude → `git diff` shows expected change
-6. `claude mcp list` → all five Claude.ai-managed servers (Notion, Gmail, Calendar, Drive, Figma) **and** the two local ones (Playwright, Firecrawl) show `✓ Connected`
+6. `claude mcp list` → all five Claude.ai-managed servers (Notion, Gmail, Calendar, Drive, Figma) **and** the local one (Playwright) show `✓ Connected`
 7. `claude agents` → all custom subagents listed (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `security-reviewer`)
 8. Trigger a destructive Bash command (e.g. ask Claude to run `rm -rf /tmp/nope`) → guard-bash hook blocks it with the "Blocked by …" message
 
