@@ -71,7 +71,7 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 
 - [`./CLAUDE.md`](./CLAUDE.md) → `~/.claude/CLAUDE.md` — your global preferences
 - [`./settings.json`](./settings.json) → `~/.claude/settings.json` — main config (theme, status line, enabled plugins, known marketplaces, PreToolUse Bash guard)
-- [`./settings.local.json`](./settings.local.json) → `~/.claude/settings.local.json` — machine-local permission allowlist
+- `./settings.local.json` → `~/.claude/settings.local.json` — machine-local permission allowlist (gitignored, so absent on a fresh clone; the bootstrap script creates an empty one)
 - [`./statusline.sh`](./statusline.sh) → `~/.claude/statusline.sh` — custom status line (wired up in `settings.json`)
 - [`./scripts/guard-bash.sh`](./scripts/guard-bash.sh) → `~/.claude/scripts/guard-bash.sh` — destructive-Bash-command blocker (wired up under `hooks.PreToolUse` in `settings.json`)
 - [`./scripts/log-instructions-loaded.sh`](./scripts/log-instructions-loaded.sh) → `~/.claude/scripts/log-instructions-loaded.sh` — appends each `InstructionsLoaded` event as JSONL to `~/.claude/logs/instructions-loaded.jsonl`. Useful for debugging which path-scoped rules fired on which file reads.
@@ -79,21 +79,26 @@ Drop these files into `~/.claude/` to bootstrap your global config:
 - [`./skills/`](./skills/) → `~/.claude/skills/` — hand-written skills loaded on demand
 - [`./rules/`](./rules/) → `~/.claude/rules/` — path-scoped rules
 
-Run from inside the `Claude/` directory of this repo:
+Run the bootstrap script from the repo root:
 
 ```bash
-cd Claude/    # the snapshot directory in this repo
-
-cp CLAUDE.md             ~/.claude/CLAUDE.md
-cp settings.json         ~/.claude/settings.json
-cp settings.local.json   ~/.claude/settings.local.json
-cp statusline.sh         ~/.claude/statusline.sh
-mkdir -p ~/.claude/scripts && cp scripts/*.sh         ~/.claude/scripts/
-mkdir -p ~/.claude/agents  && cp agents/*.md          ~/.claude/agents/
-mkdir -p ~/.claude/skills  && cp -R skills/*          ~/.claude/skills/
-mkdir -p ~/.claude/rules   && cp rules/*.md           ~/.claude/rules/
-chmod +x ~/.claude/statusline.sh ~/.claude/scripts/*.sh
+bash Claude/scripts/bootstrap-claude.sh
 ```
+
+It installs everything above, backs up any existing `settings.json`, and is idempotent — re-run it after each `git pull` to update the device.
+
+> **Do not hand-copy `settings.json`.** The snapshot stores a literal `$HOME` token in that file rather than an absolute path (see [Per-device config](#per-device-config) below). The hook commands quote their paths with single quotes, so the shell will *not* expand the token at runtime — a raw `cp` leaves every externally-managed hook pointing at a path that doesn't exist. Because those hooks guard themselves with `-f`/`-r`/`-x` tests, they fail silently rather than erroring. `bootstrap-claude.sh` expands the token for you.
+
+### Per-device config
+
+Two things are intentionally device-local and must never be shared between machines:
+
+| File | Why | Mechanism |
+| --- | --- | --- |
+| `~/.claude/settings.local.json` | Permission allowlist each machine accumulates on its own | Gitignored; excluded from the sync whitelist. `bootstrap-claude.sh` seeds it once, then never overwrites it. |
+| Absolute paths inside `settings.json` | Externally-managed hooks (orca) bake in `/Users/<name>/…`, which differs per machine | `sync-to-snapshot.sh` rewrites `/Users/<name>/` to `$HOME/` on the way into the snapshot; `bootstrap-claude.sh` expands it on the way out. |
+
+Without the second rule, two machines with different usernames each see a diff on every session and auto-commit a path swap, ping-ponging commits indefinitely.
 
 After copying `settings.json`, the listed marketplaces and `enabledPlugins` are *known* to Claude Code but the plugin payloads still need to be fetched. Open a session, run `/plugin`, and install each plugin shown as enabled. See §4 → **Plugins & Skills** for the full list.
 
