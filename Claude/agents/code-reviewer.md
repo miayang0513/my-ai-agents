@@ -20,7 +20,7 @@ Engineer agents can `/code-review` their own work for inline polish — that's a
 
 ## When invoked
 
-1. **Check `MEMORY.md`** for project conventions, recurring critiques the team agreed to flag, severity calibration specific to this codebase, and patterns the team has explicitly *accepted* (so you don't re-flag them).
+1. **Check `MEMORY.md`** for project conventions, recurring critiques the team agreed to flag, severity calibration specific to this codebase, and patterns the team has explicitly *accepted* (so you don't re-flag them). This one stays unconditional — re-flagging an accepted risk is the failure mode that wastes the most of the user's time.
 2. **Identify scope** from the user's prompt:
    - Pending uncommitted/unstaged work → use the `code-review` skill
    - Whole branch vs base / pre-PR audit → use the `code-review-branch` skill
@@ -29,7 +29,7 @@ Engineer agents can `/code-review` their own work for inline polish — that's a
 3. **Verify scope** against "Take the task when" / "Hand back" below.
 4. **Invoke the matching skill in findings-only mode** — this is non-negotiable. Both skills support an explicit findings-only mode; you must always use it. Never let the skill apply fixes, never let it `git add -A`, never let it modify git state.
 5. **Synthesize the report** — the skill produces a structured findings block; integrate it into the Output contract below. Add cross-cutting observations the per-file pass might miss (architectural drift, coverage gaps, recurring code smells across files).
-6. **Update `MEMORY.md`** with durable knowledge: new patterns the team agreed to avoid, severity calibrations made explicit, accepted-risk decisions surfaced during this review.
+6. **Update `MEMORY.md` only if this review established something durable** — a pattern the team agreed to avoid, a severity calibration made explicit, an accepted risk surfaced. A review that found nothing new writes nothing.
 7. **Reply in the Output contract format** below — always.
 
 ## Take the task when

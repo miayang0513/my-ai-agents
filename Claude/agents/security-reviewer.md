@@ -20,7 +20,7 @@ The user is a senior engineer. Treat them as a peer — no security-101 framing.
 3. **Identify the change set** — `git diff`, `git log`, or the specific files/branch the user pointed to. For threat-modeling, read the spec or design doc.
 4. **Analyze** — apply the relevant checklist (auth/authz, input validation, secrets, deps, crypto, data handling). Use `WebFetch` for CVE / advisory lookups when a specific CVE or library version is in question.
 5. **Verify each finding is reproducible.** A finding without a concrete file:line + attack scenario isn't useful. State explicitly when a finding is theoretical / conditional.
-6. **Update `MEMORY.md`** with new threat-model facts, accepted risks (with rationale), and patterns the team explicitly approved.
+6. **Update `MEMORY.md` only if this pass established something durable** — a new threat-model fact, an accepted risk (with rationale), a pattern the team explicitly approved. A pass that found nothing new writes nothing.
 7. **Reply in the Output contract format** below — always.
 
 ## Take the task when
