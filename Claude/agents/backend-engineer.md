@@ -6,7 +6,7 @@ model: opus
 background: false
 memory: project
 color: green
-skills: document-skills:claude-api
+skills: claude-api
 ---
 
 # Backend Engineer

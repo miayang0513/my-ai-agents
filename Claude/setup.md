@@ -111,13 +111,10 @@ Three things live outside `~/.claude/` and must be redone on every new machine:
 **1. Claude.ai-managed MCP connectors** — tied to your account, not local files. After logging in, connect each at [claude.ai/settings/connectors](https://claude.ai/settings/connectors):
 
 - [ ] Notion
-- [ ] Gmail
 - [ ] Google Calendar
 - [ ] Google Drive
 - [ ] Figma
 - [ ] Context7
-- [ ] Atlassian Rovo
-- [ ] Vercel
 
 **2. Local MCP server** — Playwright. Stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so it doesn't come along with the snapshot. Install the CLI globally and point Claude at it directly — **not** `npx -y`, which re-resolves the package from the npm registry on *every* launch and adds ~15s to `claude` startup:
 
@@ -146,7 +143,7 @@ echo 'SNAPSHOT_REPO="$HOME/code/my-ai-agents"' > ~/.claude/.sync-config
 
 ### MCP servers
 
-MCP (Model Context Protocol) servers extend Claude with external tools (Gmail, Notion, Drive, custom APIs).
+MCP (Model Context Protocol) servers extend Claude with external tools (Notion, Drive, custom APIs).
 
 **Step 1 — check what's already connected:**
 
@@ -158,13 +155,11 @@ The Claude.ai-managed MCP servers I rely on:
 
 ```
 claude.ai Notion:           https://mcp.notion.com/mcp                    - ✓ Connected
-claude.ai Gmail:            https://gmailmcp.googleapis.com/mcp/v1        - ✓ Connected
 claude.ai Google Calendar:  https://calendarmcp.googleapis.com/mcp/v1     - ✓ Connected
 claude.ai Google Drive:     https://drivemcp.googleapis.com/mcp/v1        - ✓ Connected
-claude.ai Figma:            https://mcp.figma.com/mcp                     - ✓ Connected
 claude.ai Context7:         https://mcp.context7.com/mcp                  - ✓ Connected
-claude.ai Atlassian Rovo:   https://mcp.atlassian.com/v1/mcp              - ✓ Connected
-claude.ai Vercel:           https://mcp.vercel.com                        - ✓ Connected
+figma-eatsy:                https://mcp.figma.com/mcp (HTTP)              - ✓ Connected
+figma-personal:             https://mcp.figma.com/mcp (HTTP)              - ✓ Connected
 ```
 
 If you signed in with a Claude.ai subscription, these come pre-wired — no manual setup needed. If any are missing or report `! Needs authentication`, (re)connect them at [claude.ai/settings/connectors](https://claude.ai/settings/connectors).
@@ -282,7 +277,7 @@ Hand-written skills live next to your config:
 - Global: `~/.claude/skills/<name>/SKILL.md`
 - Project: `<repo>/.claude/skills/<name>/SKILL.md`
 
-Each skill is a folder with a `SKILL.md` describing what it does and when to trigger. Create one with `/skill-creator`.
+Each skill is a folder with a `SKILL.md` describing what it does and when to trigger. Write it by hand, then rate it with the `skill-judge` skill.
 
 ---
 
@@ -295,7 +290,7 @@ After setup, confirm everything works end-to-end:
 3. `/status` → shows logged-in account and model
 4. Ask Claude to run `!git status` → executes shell command
 5. Edit a file via Claude → `git diff` shows expected change
-6. `claude mcp list` → the Claude.ai-managed connectors (Notion, Gmail, Calendar, Drive, Figma, Context7, Atlassian Rovo, Vercel) **and** the local one (Playwright) show `✓ Connected`
+6. `claude mcp list` → the Claude.ai-managed connectors (Notion, Calendar, Drive, Context7) **and** the local ones (Figma ×2, Playwright) show `✓ Connected`
 7. `ls ~/.claude/agents/` → eight definitions present (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `code-reviewer`, `security-reviewer`), then `/agents` inside a session to confirm they load. Note `claude agents` lists *running agent sessions*, not definitions — it is not the check you want here.
 8. Trigger a destructive Bash command (e.g. ask Claude to run `rm -rf /tmp/nope`) → guard-bash hook blocks it with the "Blocked by …" message
 

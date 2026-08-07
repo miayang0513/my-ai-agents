@@ -6,7 +6,7 @@ model: opus
 background: false
 memory: project
 color: cyan
-skills: document-skills:frontend-design, document-skills:webapp-testing, react, nextjs
+skills: react, nextjs
 ---
 
 # Frontend Engineer

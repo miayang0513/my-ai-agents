@@ -86,8 +86,8 @@ Defined in [`settings.json`](./settings.json):
 
 | Plugin | Marketplace | What it gives you |
 | --- | --- | --- |
-| `skill-creator` | `claude-plugins-official` | Build / iterate on custom skills |
-| `document-skills` | `anthropic-agent-skills` | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
+| `skill-creator` | `claude-plugins-official` | **Disabled** — the hand-written skills in `skills/` cover the workflows that mattered |
+| `document-skills` | `anthropic-agent-skills` | **Disabled** — its bundle duplicated built-in skills and pulled ~17 rarely-used ones into every session |
 | `context7` | `claude-plugins-official` | **Disabled** — superseded by the Claude.ai-managed Context7 connector |
 | `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server diagnostics and symbol-aware navigation (requires `typescript-language-server` on `PATH`) |
 
