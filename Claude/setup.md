@@ -125,8 +125,10 @@ Three things live outside `~/.claude/` and must be redone on every new machine:
 npm i -g @playwright/mcp                      # install once, under your active node
 
 NODE="$(command -v node)"
-claude mcp add playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
+claude mcp add -s user playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
 ```
+
+> `-s user` is required. `claude mcp add` defaults to `local` scope, which registers the server for the *current project only* and writes a project-keyed entry instead of the user-scope one this setup expects.
 
 > This resolves to an absolute path under your *current* node. With nvm the path is version-specific — after `nvm install` / switching the default, re-run `npm i -g …` and re-add (or hand-edit the path in `~/.claude.json`).
 
@@ -170,8 +172,8 @@ If you signed in with a Claude.ai subscription, these come pre-wired — no manu
 **Step 2 — add your own:**
 
 ```bash
-claude mcp add <name> <command> [args...]   # add
-claude mcp remove <name>                    # remove
+claude mcp add -s user <name> <command> [args...]   # add (omit -s user and it lands in project scope)
+claude mcp remove <name>                            # remove
 ```
 
 Servers can also be declared in `settings.json` under `mcpServers`. Once added, their tools appear in-session as `mcp__<server>__<tool>`.
@@ -183,7 +185,7 @@ npm i -g @playwright/mcp
 NODE="$(command -v node)"
 
 # Browser automation — drives a real Chromium for navigating, clicking, scraping
-claude mcp add playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
+claude mcp add -s user playwright -- "$NODE" "$(npm root -g)/@playwright/mcp/cli.js"
 ```
 
 After adding, re-run `claude mcp list` to confirm it shows `✓ Connected`.
