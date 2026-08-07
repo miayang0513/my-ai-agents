@@ -161,8 +161,8 @@
     "command": "bash ~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "skill-creator@claude-plugins-official": true,
-    "document-skills@anthropic-agent-skills": true,
+    "skill-creator@claude-plugins-official": false,
+    "document-skills@anthropic-agent-skills": false,
     "context7@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": true
   },
@@ -176,5 +176,13 @@
   },
   "theme": "dark",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "skillOverrides": {
+    "nextjs": "off",
+    "react": "off",
+    "skill-judge": "off"
+  }
 }
