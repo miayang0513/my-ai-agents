@@ -48,12 +48,13 @@ git symbolic-ref -q HEAD >/dev/null || {
 # etc.). Reuses sync-to-snapshot.sh so whitelist + secret guard stay single-
 # sourced.
 {
-  for f in CLAUDE.md settings.json settings.local.json statusline.sh; do
+  for f in CLAUDE.md settings.json statusline.sh; do
     [ -f "$CLAUDE_DIR/$f" ] && printf '%s\n' "$CLAUDE_DIR/$f"
   done
   [ -d "$CLAUDE_DIR/scripts" ] && find "$CLAUDE_DIR/scripts" -type f
   [ -d "$CLAUDE_DIR/agents" ]  && find "$CLAUDE_DIR/agents"  -type f
   [ -d "$CLAUDE_DIR/skills" ]  && find "$CLAUDE_DIR/skills"  -type f
+  [ -d "$CLAUDE_DIR/rules" ]   && find "$CLAUDE_DIR/rules"   -type f
 } | while IFS= read -r f; do
   printf '{"tool_name":"Edit","tool_input":{"file_path":"%s"}}' "$f" \
     | bash "$CLAUDE_DIR/scripts/sync-to-snapshot.sh"
@@ -69,7 +70,7 @@ DIFFBODY=$(git diff --cached -- Claude/ | head -300)
 RECENT=$(git log -5 --format='%s' -- Claude/)
 
 PROMPT=$(cat <<EOF
-Generate one conventional-commits message for the staged diff below in /Users/mian.yang/Repos/my-ai-agents.
+Generate one conventional-commits message for the staged diff below in $SNAPSHOT_REPO.
 
 Recent commit style from this repo (match this voice):
 $RECENT

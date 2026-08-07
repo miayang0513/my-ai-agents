@@ -31,8 +31,12 @@ REL="${FILE_PATH#$CLAUDE_DIR/}"
 
 # Whitelist: top-level config + specific subdirs. Anything else (cache/, sessions/,
 # projects/, plugins/, history.jsonl, etc.) is ignored.
+#
+# settings.local.json is deliberately NOT here: it holds the per-device permission
+# allowlist, which each machine accumulates on its own. Mirroring it would make two
+# machines overwrite each other's permissions on every sync. It is gitignored.
 case "$REL" in
-  CLAUDE.md|settings.json|settings.local.json|statusline.sh) ;;
+  CLAUDE.md|settings.json|statusline.sh) ;;
   scripts/*|agents/*|skills/*|rules/*) ;;
   *) exit 0 ;;
 esac
@@ -58,5 +62,18 @@ fi
 
 DEST="$SNAPSHOT_DIR/$REL"
 mkdir -p "$(dirname "$DEST")"
-cp "$FILE_PATH" "$DEST"
+
+# settings.json is rewritten by external tooling (orca) that bakes in absolute
+# /Users/<name>/ paths. Store a literal $HOME token in the snapshot instead, so a
+# machine whose username differs doesn't see a diff and auto-commit a path swap on
+# every session — two devices would otherwise ping-pong commits forever.
+# bootstrap-claude.sh expands the token back on the way out.
+case "$REL" in
+  settings.json)
+    sed 's|/Users/[^/"]*/|$HOME/|g' "$FILE_PATH" > "$DEST"
+    ;;
+  *)
+    cp "$FILE_PATH" "$DEST"
+    ;;
+esac
 exit 0

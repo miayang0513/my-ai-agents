@@ -41,6 +41,10 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
+# Per-device config — must differ between machines, never committed
+Claude/settings.local.json
+CLAUDE.local.md
+
 # AI / data
 *.ckpt
 *.pt

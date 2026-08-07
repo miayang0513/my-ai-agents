@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -60,7 +60,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -92,7 +92,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -103,7 +103,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -114,7 +114,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -125,7 +125,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -137,7 +137,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -149,7 +149,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/Users/mia.yang/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
+            "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
