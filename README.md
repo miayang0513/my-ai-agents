@@ -19,7 +19,7 @@ Setup and verification commands are intentionally centralized in edition-specifi
 | --- | --- |
 | [`Claude/CLAUDE.md`](./Claude/CLAUDE.md) | Global preferences and behavior policy |
 | [`Claude/settings.json`](./Claude/settings.json) | Main config (hooks, plugins, status line) |
-| [`Claude/settings.local.json`](./Claude/settings.local.json) | Machine-local permissions |
+| `Claude/settings.local.json` | Machine-local permissions — gitignored, created per device by the bootstrap script |
 | [`Claude/statusline.sh`](./Claude/statusline.sh) | Custom status line renderer |
 | [`Claude/scripts/`](./Claude/scripts/) | Guard/sync/auto-commit/instruction logging scripts |
 | [`Claude/agents/`](./Claude/agents/) | Role-based subagents |
@@ -31,14 +31,16 @@ Setup and verification commands are intentionally centralized in edition-specifi
 
 | Agent | Model | Read/Write | Use for |
 | --- | --- | --- | --- |
-| [`frontend-engineer`](./Claude/agents/frontend-engineer.md) | sonnet | RW | UI, styling, client-side state, performance, accessibility, Figma implementation |
-| [`backend-engineer`](./Claude/agents/backend-engineer.md) | sonnet | RW | APIs, services, schemas, queries, migrations, auth/session, jobs |
+| [`frontend-engineer`](./Claude/agents/frontend-engineer.md) | opus | RW | UI, styling, client-side state, performance, accessibility, Figma implementation |
+| [`backend-engineer`](./Claude/agents/backend-engineer.md) | opus | RW | APIs, services, schemas, queries, migrations, auth/session, jobs |
 | [`devops-engineer`](./Claude/agents/devops-engineer.md) | sonnet | RW | CI/CD, Docker, IaC, deployment configs, build tooling |
 | [`product-manager`](./Claude/agents/product-manager.md) | sonnet | RW (no Bash) | PRDs, specs, user stories, release/status updates |
 | [`uiux-designer`](./Claude/agents/uiux-designer.md) | sonnet | RW (no Bash) | Design review, design-system audits, Figma-to-spec translation |
 | [`qa-engineer`](./Claude/agents/qa-engineer.md) | sonnet | RW | Test plans, bug repro, flaky-test triage, regression suites |
-| [`code-reviewer`](./Claude/agents/code-reviewer.md) | sonnet | **read-only** | Cold-context review with severity-tagged findings |
-| [`security-reviewer`](./Claude/agents/security-reviewer.md) | **opus** | **read-only** | Threat modeling, secret/dependency scanning, auth/input-validation review |
+| [`code-reviewer`](./Claude/agents/code-reviewer.md) | opus | **read-only** | Cold-context review with severity-tagged findings |
+| [`security-reviewer`](./Claude/agents/security-reviewer.md) | opus | **read-only** | Threat modeling, secret/dependency scanning, auth/input-validation review |
+
+The four `sonnet` roles also set `effort: low`; `frontend-engineer` and `backend-engineer` set `background: false`.
 
 ## Claude Skills
 
@@ -86,7 +88,7 @@ Defined in [`Claude/settings.json`](./Claude/settings.json):
 | --- | --- | --- |
 | `skill-creator` | `claude-plugins-official` | Build / iterate on custom skills |
 | `document-skills` | `anthropic-agent-skills` | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
-| `context7` | `claude-plugins-official` | Up-to-date library docs MCP (Upstash, Community Managed) |
+| `context7` | `claude-plugins-official` | **Disabled** — superseded by the Claude.ai-managed Context7 connector |
 | `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server diagnostics and symbol-aware navigation (requires `typescript-language-server` on `PATH`) |
 
 ## Cursor Alternative

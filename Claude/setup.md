@@ -115,6 +115,9 @@ Three things live outside `~/.claude/` and must be redone on every new machine:
 - [ ] Google Calendar
 - [ ] Google Drive
 - [ ] Figma
+- [ ] Context7
+- [ ] Atlassian Rovo
+- [ ] Vercel
 
 **2. Local MCP server** — Playwright. Stored in `~/.claude.json` (user-scope MCP config), separate from `~/.claude/settings.json`, so it doesn't come along with the snapshot. Install the CLI globally and point Claude at it directly — **not** `npx -y`, which re-resolves the package from the npm registry on *every* launch and adds ~15s to `claude` startup:
 
@@ -157,9 +160,12 @@ claude.ai Gmail:            https://gmailmcp.googleapis.com/mcp/v1        - ✓ 
 claude.ai Google Calendar:  https://calendarmcp.googleapis.com/mcp/v1     - ✓ Connected
 claude.ai Google Drive:     https://drivemcp.googleapis.com/mcp/v1        - ✓ Connected
 claude.ai Figma:            https://mcp.figma.com/mcp                     - ✓ Connected
+claude.ai Context7:         https://mcp.context7.com/mcp                  - ✓ Connected
+claude.ai Atlassian Rovo:   https://mcp.atlassian.com/v1/mcp              - ✓ Connected
+claude.ai Vercel:           https://mcp.vercel.com                        - ✓ Connected
 ```
 
-If you signed in with a Claude.ai subscription, these four come pre-wired — no manual setup needed. If any are missing, connect them at [claude.ai/settings/connectors](https://claude.ai/settings/connectors).
+If you signed in with a Claude.ai subscription, these come pre-wired — no manual setup needed. If any are missing or report `! Needs authentication`, (re)connect them at [claude.ai/settings/connectors](https://claude.ai/settings/connectors).
 
 **Step 2 — add your own:**
 
@@ -287,8 +293,8 @@ After setup, confirm everything works end-to-end:
 3. `/status` → shows logged-in account and model
 4. Ask Claude to run `!git status` → executes shell command
 5. Edit a file via Claude → `git diff` shows expected change
-6. `claude mcp list` → all five Claude.ai-managed servers (Notion, Gmail, Calendar, Drive, Figma) **and** the local one (Playwright) show `✓ Connected`
-7. `claude agents` → all custom subagents listed (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `security-reviewer`)
+6. `claude mcp list` → the Claude.ai-managed connectors (Notion, Gmail, Calendar, Drive, Figma, Context7, Atlassian Rovo, Vercel) **and** the local one (Playwright) show `✓ Connected`
+7. `claude agents` → all eight custom subagents listed (`frontend-engineer`, `backend-engineer`, `devops-engineer`, `product-manager`, `uiux-designer`, `qa-engineer`, `code-reviewer`, `security-reviewer`)
 8. Trigger a destructive Bash command (e.g. ask Claude to run `rm -rf /tmp/nope`) → guard-bash hook blocks it with the "Blocked by …" message
 
 If any step fails, check `~/.claude/logs/` for harness errors.

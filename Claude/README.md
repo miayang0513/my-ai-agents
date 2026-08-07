@@ -12,7 +12,7 @@ See [`setup.md`](./setup.md) for full install/auth/bootstrap. This README is an 
 | --- | --- |
 | [`CLAUDE.md`](./CLAUDE.md) | Global preferences and behavior policy |
 | [`settings.json`](./settings.json) | Main config (hooks, plugins, status line) |
-| [`settings.local.json`](./settings.local.json) | Machine-local permissions |
+| `settings.local.json` | Machine-local permissions — gitignored, created per device by the bootstrap script |
 | [`statusline.sh`](./statusline.sh) | Custom status line renderer |
 | [`scripts/`](./scripts/) | Guard/sync/auto-commit/instruction logging scripts |
 | [`agents/`](./agents/) | Role-based subagents |
@@ -24,20 +24,23 @@ See [`setup.md`](./setup.md) for full install/auth/bootstrap. This README is an 
 
 | Agent | Model | Read/Write | Use for |
 | --- | --- | --- | --- |
-| [`frontend-engineer`](./agents/frontend-engineer.md) | sonnet | RW | UI, styling, client-side state, performance, accessibility, Figma implementation |
-| [`backend-engineer`](./agents/backend-engineer.md) | sonnet | RW | APIs, services, schemas, queries, migrations, auth/session, jobs |
+| [`frontend-engineer`](./agents/frontend-engineer.md) | opus | RW | UI, styling, client-side state, performance, accessibility, Figma implementation |
+| [`backend-engineer`](./agents/backend-engineer.md) | opus | RW | APIs, services, schemas, queries, migrations, auth/session, jobs |
 | [`devops-engineer`](./agents/devops-engineer.md) | sonnet | RW | CI/CD, Docker, IaC, deployment configs, build tooling |
 | [`product-manager`](./agents/product-manager.md) | sonnet | RW (no Bash) | PRDs, specs, user stories, release/status updates |
 | [`uiux-designer`](./agents/uiux-designer.md) | sonnet | RW (no Bash) | Design review, design-system audits, Figma-to-spec translation |
 | [`qa-engineer`](./agents/qa-engineer.md) | sonnet | RW | Test plans, bug repro, flaky-test triage, regression suites |
-| [`code-reviewer`](./agents/code-reviewer.md) | sonnet | **read-only** | Cold-context review with severity-tagged findings |
-| [`security-reviewer`](./agents/security-reviewer.md) | **opus** | **read-only** | Threat modeling, secret/dependency scanning, auth/input-validation review |
+| [`code-reviewer`](./agents/code-reviewer.md) | opus | **read-only** | Cold-context review with severity-tagged findings |
+| [`security-reviewer`](./agents/security-reviewer.md) | opus | **read-only** | Threat modeling, secret/dependency scanning, auth/input-validation review |
+
+The four `sonnet` roles also set `effort: low`; `frontend-engineer` and `backend-engineer` set `background: false`.
 
 ## Skills
 
 | Skill | What it does |
 | --- | --- |
 | [`commit`](./skills/commit) | Inspects git state, drafts Conventional Commit messages, performs commit workflow on request |
+| [`commit-for-review`](./skills/commit-for-review) | Same as `commit`, but lands the commit on a derived `review/<id>` branch to keep review changes off the branch under review |
 | [`code-review`](./skills/code-review) | Reviews staged + unstaged work only, with findings/fix workflow |
 | [`code-review-branch`](./skills/code-review-branch) | Reviews full branch vs base before PR/merge |
 | [`skill-judge`](./skills/skill-judge) | Evaluates skill quality with rubric-based scoring |
@@ -84,7 +87,7 @@ Defined in [`settings.json`](./settings.json):
 | --- | --- | --- |
 | `skill-creator` | `claude-plugins-official` | Build / iterate on custom skills |
 | `document-skills` | `anthropic-agent-skills` | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
-| `context7` | `claude-plugins-official` | Up-to-date library docs MCP (Upstash, Community Managed) |
+| `context7` | `claude-plugins-official` | **Disabled** — superseded by the Claude.ai-managed Context7 connector |
 | `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server diagnostics and symbol-aware navigation (requires `typescript-language-server` on `PATH`) |
 
 Install/update flow and marketplace commands are documented in [`setup.md`](./setup.md#plugins--skills).
