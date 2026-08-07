@@ -34,5 +34,6 @@ bash Cursor/scripts/bootstrap-cursor-project.sh /path/to/your-project
 - This edition does not require Claude CLI.
 - MCP is supported, but you may need to remap tool names in `.cursor/agents/` to your local server IDs.
 - Claude plugin marketplace behavior is not 1:1 in Cursor; use local skills and Cursor-native integrations instead.
+- The `sync-device` skill is deliberately not ported. It drives `bootstrap-claude.sh` and the `~/.claude/` snapshot sync loop, and Cursor has no `PostToolUse`/`Stop` hook equivalents — so there is no snapshot to sync and nothing for the skill to do. This edition installs per-project via `bootstrap-cursor-project.sh`; re-run it after a `git pull` to update a project.
 - See the MCP install/verification checklist in [`setup.md`](./setup.md#mcp-setup-checklist-recommended).
 - For Claude-native setup, use [`../Claude/README.md`](../Claude/README.md) and [`../Claude/setup.md`](../Claude/setup.md).

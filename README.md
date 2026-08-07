@@ -53,6 +53,7 @@ The four `sonnet` roles also set `effort: low`; `frontend-engineer` and `backend
 | [`skill-judge`](./Claude/skills/skill-judge) | Evaluates skill quality with rubric-based scoring |
 | [`react`](./Claude/skills/react) | React client performance guidance (rerenders, bundle, waterfalls, hot paths) |
 | [`nextjs`](./Claude/skills/nextjs) | Next.js App Router guidance (RSC boundaries, server caching, hydration, route strategy) |
+| [`sync-device`](./Claude/skills/sync-device) | Pulls this repo onto a device, runs `bootstrap-claude.sh`, checks the per-device gaps the snapshot can't carry, and summarises what changed |
 
 ## Claude Rules
 
