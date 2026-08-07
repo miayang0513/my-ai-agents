@@ -164,7 +164,6 @@
     "skill-creator@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true,
     "context7@claude-plugins-official": false,
-    "codex@openai-codex": true,
     "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
@@ -172,12 +171,6 @@
       "source": {
         "source": "github",
         "repo": "anthropics/skills"
-      }
-    },
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
       }
     }
   },

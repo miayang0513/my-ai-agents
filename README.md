@@ -87,7 +87,6 @@ Defined in [`Claude/settings.json`](./Claude/settings.json):
 | `skill-creator` | `claude-plugins-official` | Build / iterate on custom skills |
 | `document-skills` | `anthropic-agent-skills` | ~17 skills: `docx`, `pdf`, `pptx`, `xlsx`, `frontend-design`, `web-artifacts-builder`, `theme-factory`, `webapp-testing`, `internal-comms`, `brand-guidelines`, `mcp-builder`, `slack-gif-creator`, `canvas-design`, `algorithmic-art`, `doc-coauthoring`, `claude-api` |
 | `context7` | `claude-plugins-official` | Up-to-date library docs MCP (Upstash, Community Managed) |
-| `codex` | `openai-codex` | OpenAI Codex CLI integration: `/codex:setup`, `/codex:rescue`, plus internal helpers |
 | `typescript-lsp` | `claude-plugins-official` | TypeScript Language Server diagnostics and symbol-aware navigation (requires `typescript-language-server` on `PATH`) |
 
 ## Cursor Alternative

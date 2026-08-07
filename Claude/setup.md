@@ -13,7 +13,7 @@ All setup procedures and verification steps are intentionally centralized in thi
 
 - macOS with a terminal (zsh, bash, fish all fine)
 - **`jq`** — required by `statusline.sh` and `scripts/guard-bash.sh`
-- **`node`** — required by the Codex plugin hooks and the local MCP servers (Playwright, Firecrawl, run via globally-installed CLIs — see §3). Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If hooks/MCPs fail with `node: command not found`, see §4 → **Codex plugin & MCPs — node-on-PATH gotcha** for the fix.
+- **`node`** — required by the local MCP servers (Playwright, Firecrawl, run via globally-installed CLIs — see §3) and by `typescript-lsp`. Any working install on `PATH` (Homebrew, nvm, asdf) is fine. If MCPs fail with `node: command not found`, see §4 → **node-on-PATH gotcha** for the fix.
 
 ```bash
 brew install jq
@@ -222,13 +222,12 @@ Use `/plugin` to install/update plugins and `/reload-plugins` to apply changes i
 
 #### Marketplaces
 
-Plugin marketplaces are git-backed sources of plugins. Three configured on this machine (see `extraKnownMarketplaces` in `settings.json`):
+Plugin marketplaces are git-backed sources of plugins. Two are configured (see `extraKnownMarketplaces` in `settings.json`):
 
 | Marketplace | Source | Add command |
 | --- | --- | --- |
 | `claude-plugins-official` | bundled by default | (already present) |
 | `anthropic-agent-skills` | `anthropics/skills` | `/plugin marketplace add anthropics/skills` |
-| `openai-codex` | `openai/codex-plugin-cc` | `/plugin marketplace add openai/codex-plugin-cc` |
 
 #### Plugin commands (run inside a Claude session)
 
@@ -247,28 +246,21 @@ Setup reminder:
 - after copying `settings.json`, run `/plugin` to install enabled plugins
 - run `/reload-plugins` after install/update in the current session
 
-#### Codex plugin & MCPs — node-on-PATH gotcha
+#### node-on-PATH gotcha
 
-The Codex plugin needs a working `node` on `PATH` because its three lifecycle hooks (`SessionStart`, `SessionEnd`, `Stop`) shell out to `node /path/to/script.mjs`. If `node` isn't found you'll see:
+Anything Claude Code spawns as a subprocess — the local MCP servers (§3 step 2), `typescript-lsp`, or any plugin hook that shells out to `node` — resolves binaries from the `PATH` the harness inherited, **not** from your interactive shell.
 
-```
-⏺ Ran 3 stop hooks
-  ⎿  Stop hook error: Failed with non-blocking status code: /bin/sh: node: command not found
-```
+First check whether node exists at all:
 
-**Install:**
-
-```text
-/plugin marketplace add openai/codex-plugin-cc   # add the marketplace
-/plugin                                          # → install "codex"
-/reload-plugins                                  # apply
+```bash
+command -v node || echo "no node installed"
 ```
 
-**Make node reachable** — most relevant on macOS where Node is nvm-managed with a *lazy-load* shim (`_load_nvm`). That shim only fires inside an interactive zsh, so when Claude Code is launched from a wrapper like cmux/Ghostty plugins/an IDE that doesn't source `.zshrc`, `node` isn't on `PATH` for spawned subprocesses and the Codex hooks fail.
+If it prints nothing but `node --version` works in your terminal, the binary exists and only `PATH` is the problem. That is most common on macOS with nvm, whose *lazy-load* shim (`_load_nvm`) only fires inside an interactive zsh — launch Claude Code from cmux, a Ghostty plugin, or an IDE that doesn't source `.zshrc` and `node` is absent for spawned subprocesses.
 
 Two fixes — pick one:
 
-- **Symlink nvm's node onto the system PATH** (no second toolchain; what this machine uses):
+- **Symlink nvm's node onto the system PATH** (no second toolchain):
 
   ```bash
   ln -sf "$(command -v node)" /opt/homebrew/bin/node
@@ -282,7 +274,7 @@ Two fixes — pick one:
   brew install node      # node lives in /opt/homebrew/bin/, always on PATH
   ```
 
-After either, the Codex hooks stop erroring. Interactive shells still use nvm's node — it sits earlier on `PATH`.
+Verify with `claude mcp list` — Playwright and Firecrawl should both report `✓ Connected`.
 
 #### Built-in skills (no install needed)
 
