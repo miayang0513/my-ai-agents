@@ -128,7 +128,7 @@ Cursor supports MCP, but server IDs/tool names often differ from Claude naming.
    - `context7`
    - `figma`
    - `playwright`
-   - optional productivity servers (`notion`, `gmail`, `google_calendar`, `google_drive`)
+   - optional productivity servers (`notion`, `google_calendar`, `google_drive`)
 3. Open `.cursor/agents/*.md` in your target project.
 4. In each `tools:` field, map names to your local MCP IDs.
 5. Run verification prompts (Section 6).

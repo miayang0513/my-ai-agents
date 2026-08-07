@@ -5,7 +5,7 @@ tools: Read, Edit, Write, Bash, Grep, Glob, mcp__figma, mcp__playwright, mcp__co
 model: sonnet
 memory: project
 color: cyan
-skills: document-skills:frontend-design, document-skills:webapp-testing, react, nextjs
+skills: react, nextjs
 ---
 
 # Frontend Engineer

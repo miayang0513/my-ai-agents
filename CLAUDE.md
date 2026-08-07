@@ -80,7 +80,7 @@ End-to-end checklists live in `Claude/setup.md` §5 and `Cursor/setup.md` §6. `
 | `model:` | `opus` for frontend/backend/code-reviewer/security-reviewer; `sonnet` + `effort: low` for devops/product-manager/qa/uiux | `sonnet`, no `effort` |
 | Execution-mode frontmatter (`background:`, `effort:`) | present | absent |
 | Destructive-command guard | `guard-bash.sh` via `PreToolUse` hook | `guard-bash-portable.sh` via `pre-commit` git hook |
-| Plugin-provided skills (`document-skills:*`) | referenced | dropped, or redirected to Context7 / provider docs |
+| Agent `skills:` frontmatter | `claude-api` on backend, `react`/`nextjs` on frontend | no `claude-api` (no Cursor equivalent); `react`/`nextjs` only |
 
 Cursor has no `PostToolUse`/`InstructionsLoaded`/`Stop` equivalents, so it has no snapshot sync or auto-commit — that side uses git hooks and the `AI_COMMIT_CMD` adapter (`Cursor/scripts/gen-commit-message.sh`: prompt on stdin, one plain-text Conventional Commit line on stdout).
 
