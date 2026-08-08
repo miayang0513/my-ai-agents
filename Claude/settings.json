@@ -64,6 +64,14 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env node $HOME/.tokentracker/bin/notify.cjs --source=claude"
+          }
+        ]
       }
     ],
     "InstructionsLoaded": [
@@ -151,6 +159,16 @@
             "type": "command",
             "command": "if [ -f '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -r '$HOME/.orca/agent-hooks/claude-hook.sh' ] && [ -x '$HOME/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '$HOME/.orca/agent-hooks/claude-hook.sh'; else { command -p cat 2>/dev/null || cat; } >/dev/null 2>&1 || :; fi",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env node $HOME/.tokentracker/bin/notify.cjs --source=claude"
           }
         ]
       }
