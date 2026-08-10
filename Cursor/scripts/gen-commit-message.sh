@@ -52,7 +52,7 @@ MSG="$(
     | tr -d '`"'
 )"
 
-if [ -z "$MSG" ] || ! echo "$MSG" | grep -qE '^(feat|fix|refactor|docs|chore|style|test|build|revert|perf|ci|security)(\([a-z0-9_-]+\))?: [a-z]'; then
+if [ -z "$MSG" ] || ! echo "$MSG" | grep -qE '^(feat|fix|refactor|docs|chore|style|test|build|revert|perf|ci|security)(\([a-z0-9_-]+(, ?[a-z0-9_-]+)*\))?: [a-z]'; then
   echo "Generated message failed validation:"
   echo "$MSG"
   exit 1
