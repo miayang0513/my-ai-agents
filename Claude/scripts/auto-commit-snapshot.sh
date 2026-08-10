@@ -96,7 +96,7 @@ MSG=$(printf '%s' "$PROMPT" | claude --print --no-session-persistence --model ha
 
 # Validate: must be a conventional-commits line, not a generic "auto-sync"
 if [ -z "$MSG" ] || \
-   ! echo "$MSG" | grep -qE '^(feat|fix|refactor|docs|chore|style|test|build|revert|perf|ci|security)(\([a-z0-9_-]+\))?: [a-z]' || \
+   ! echo "$MSG" | grep -qE '^(feat|fix|refactor|docs|chore|style|test|build|revert|perf|ci|security)(\([a-z0-9_-]+(, ?[a-z0-9_-]+)*\))?: [a-z]' || \
    echo "$MSG" | grep -qE 'auto-sync'; then
   printf '%s [ABORT] message did not pass validation: %s — un-staged, leaving for manual commit\n' \
     "$(date '+%Y-%m-%d %H:%M:%S')" "$MSG" >> "$LOG"
