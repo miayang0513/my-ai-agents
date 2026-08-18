@@ -2,7 +2,15 @@
   "env": {
     "CLAUDE_CODE_NO_FLICKER": "1"
   },
-  "model": "claude-opus-5[1m]",
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "claude-fable-5[1m]",
+  "skillOverrides": {
+    "nextjs": "off",
+    "react": "off",
+    "skill-judge": "off"
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -194,13 +202,5 @@
   },
   "theme": "dark",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "permissions": {
-    "defaultMode": "auto"
-  },
-  "skillOverrides": {
-    "nextjs": "off",
-    "react": "off",
-    "skill-judge": "off"
-  }
+  "skipAutoPermissionPrompt": true
 }
